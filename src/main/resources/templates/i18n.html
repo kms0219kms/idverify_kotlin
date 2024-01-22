@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko" th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport">
+  <title>Insert Title Here</title>
+</head>
+<body>
+<p>
+  <a href="i18n.html?lang=ko">Korean</a>
+  <a href="i18n.html?lang=en">English</a>
+  <a href="i18n.html?lang=ja">Japanese</a>
+  <a href="i18n.html?lang=vi">Vietnamese</a>
+</p>
+
+<p style="font-size: 20px; font-weight: bold;">Current Language : <span th:text="${lang}"></span></p>
+
+<p>verify.title : <span th:text="#{verify.title}"></span></p>
+<p>verify.loading : <span th:text="#{verify.loading}"></span></p>
+<p>common.errors.invalidrequest : <span th:text="#{common.errors.invalidrequest}"></span></p>
+<p>common.errors.unexpected : <span th:text="#{common.errors.unexpected}"></span></p>
+</body>
+</html>
