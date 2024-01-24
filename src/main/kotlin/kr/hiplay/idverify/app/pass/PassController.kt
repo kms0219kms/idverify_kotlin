@@ -13,7 +13,7 @@ import org.springframework.web.servlet.LocaleResolver
 
 @Controller
 @RequestMapping("/pass")
-class PassController {
+class PassController(var passService: PassService) {
     @Autowired
     private lateinit var request: HttpServletRequest
 
@@ -21,25 +21,11 @@ class PassController {
     @Qualifier("localeResolver")
     private lateinit var localeResolver: LocaleResolver
 
-    private lateinit var passService: PassService
-
     @GetMapping("/start.html")
     fun start(model: Model): String {
         model["provider"] = "pass"
         model["lang"] = localeResolver.resolveLocale(request)
 
         return "identify/start"
-    }
-
-    @GetMapping("/request.html")
-    fun request(model: Model): String {
-
-        val orderId = passService.createOrder()
-        val hashData = passService.getHash(orderId)
-
-        model["orderId"] = orderId
-        model["hashData"] = hashData
-
-        return "identify/pass/request"
     }
 }

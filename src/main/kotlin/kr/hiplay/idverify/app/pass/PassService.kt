@@ -8,15 +8,13 @@ import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo
+import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.File
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.security.PrivateKey
 import java.security.Signature
 import java.time.LocalDateTime
@@ -35,7 +33,8 @@ interface IHashData {
     val kcpMerchantTime: String
 }
 
-open class PassService {
+@Service
+class PassService {
     private val siteCd = "AO0QE"
     private val webSiteId = ""
     private val webSiteIdHashing = "Y"
@@ -45,8 +44,11 @@ open class PassService {
 
     private fun getSerializedCert(certType: String): String {
         val certFile = when {
-            (certType === "private") -> File("certificate/sqlPrikeyPKCS8.pem")
-            else -> File("certificate/sqlCert.pem")
+            (certType === "private") -> File(
+                this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")?.toURI()!!
+            )
+
+            else -> File(this::class.java.classLoader.getResource("kcp/certificate/splCert.pem")?.toURI()!!)
         }
 
         return certFile.readText(Charsets.UTF_8)
@@ -60,10 +62,10 @@ open class PassService {
     }
 
     private fun loadSplMctPrivateKeyPKCS8(): PrivateKey {
-        val path = Paths.get("certificate/sqlCert.pem")
+        val file = File(this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")?.toURI()!!)
         val privateKeyPassword = "changeit"
 
-        val strPriKeyData = Files.readAllLines(path)
+        val strPriKeyData = file.readLines()
             .stream()
             .filter { line: String ->
                 !line.startsWith("-----BEGIN") && !line.startsWith(
@@ -71,6 +73,8 @@ open class PassService {
                 )
             }
             .collect(Collectors.joining())
+
+        println(strPriKeyData)
 
         val btArrPriKey = Base64.getDecoder().decode(strPriKeyData)
 
@@ -88,7 +92,7 @@ open class PassService {
 
     private fun makeSignatureData(targetData: String): String {
         val priKey: PrivateKey = loadSplMctPrivateKeyPKCS8()
-        val btArrTargetData = targetData.toByteArray(StandardCharsets.UTF_8)
+        val btArrTargetData = targetData.toByteArray(Charsets.UTF_8)
 
         val sign = Signature.getInstance("SHA256WithRSA")
         sign.initSign(priKey)
@@ -100,7 +104,7 @@ open class PassService {
     }
 
     @Transactional
-    open fun createOrder(): String {
+    fun createOrder(): String {
         val orderId = NanoId.generate()
 
         // TODO: 요청 정보 DB처리
@@ -109,7 +113,7 @@ open class PassService {
     }
 
     @Transactional
-    open fun getHash(orderId: String): IHashData {
+    fun getHash(orderId: String): IHashData {
         val ctType = "HAS"
         val taxNo = "000000"
 
@@ -139,6 +143,11 @@ open class PassService {
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
         val responseBody = jacksonObjectMapper().readTree(response.body())
+
+        println(response.toString())
+        println(responseBody.toString())
+        println("==========================")
+        println(requestBody.toString())
 
         return object : IHashData {
             override val orderId = orderId
