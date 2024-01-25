@@ -1,6 +1,83 @@
-<div th:fragment="request">
-  <form method="post" name="form_auth">
-    <!-- TODO: 실제 인증창으로 전송할 파라미터 준비 -->
-    <!-- <input type="hidden" name="ordr_idxx" th:value="${hashData.orderId}" />-->
+<!DOCTYPE html>
+<html lang="ko" th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport">
+  <title>본인 인증 | 하이플레이</title>
+</head>
+<body>
+<form method="post" name="form_auth" target="auth_popup" th:action="${pass_kcpBaseUrl} + '/kcp_cert/cert_view.jsp'">
+  <!-- 요청정보 -->
+  <input name="ordr_idxx" type="hidden" value=""/>
+  <input name="up_hash" type="hidden" value=""/>
+
+  <input name="kcp_merchant_time" type="hidden" value=""/>
+  <input name="kcp_cert_lib_ver" type="hidden" value=""/>
+
+  <!-- 요청구분 -->
+  <input name="req_tx" type="hidden" value="cert"/>
+  <input name="cert_method" type="hidden" value="01"/>
+
+  <!-- 가맹점 정보 -->
+  <input name="web_siteid" th:value="${pass_webSiteId}" type="hidden"/>
+  <input name="site_cd" th:value="${pass_siteCd}" type="hidden"/>
+  <input name="Ret_URL" th:value="${pass_callbackUrl}" type="hidden"/>
+
+  <!-- cert_otp_use 필수 (메뉴얼 참고)
+  Y : 실명 확인 + OTP 점유 확인 -->
+  <input name="cert_otp_use" type="hidden" value="Y"/>
+
+  <!-- 리턴 암호화 고도화 -->
+  <input name="cert_enc_use_ext" type="hidden" value="Y"/>
+  <input name="res_cd" type="hidden" value=""/>
+  <input name="res_msg" type="hidden" value=""/>
+
+  <!-- web_siteid 검증 을 위한 필드 -->
+  <input name="web_siteid_hashYN" th:value="${pass_webSiteidHashYN}" type="hidden"/>
+
+  <!-- up_hash 검증 을 위한 필드 -->
+  <input name="veri_up_hash" type="hidden" value=""/>
+
+  <!-- 가맹점 사용 필드 (인증완료시 리턴)-->
+  <input name="param_opt_1" type="hidden" value="opt1"/>
+  <input name="param_opt_2" type="hidden" value="opt2"/>
+  <input name="param_opt_3" type="hidden" value="opt3"/>
   </form>
-</div>
+
+<script th:inline="javascript">
+  function getHashData() {
+    return axios.get("/api/pass/getHashData.do");
+  }
+
+  async function initVerify() {
+    try {
+      const hashData = await getHashData()
+
+      // 해시 데이터 입력
+      document.querySelector('form[name="form_auth"] input[name="ordr_idxx"]').value = hashData.data.orderId
+      document.querySelector('form[name="form_auth"] input[name="up_hash"]').value = hashData.data.upHash
+      document.querySelector(
+          'form[name="form_auth"] input[name="kcp_merchant_time"]').value = hashData.data.kcpMerchantTime
+      document.querySelector(
+          'form[name="form_auth"] input[name="kcp_cert_lib_ver"]').value = hashData.data.kcpCertLibVer
+
+      // 본인인증 요청
+      self.name = "auth_popup";
+      document.querySelector('form[name="form_auth"]').submit()
+    } catch {
+      alert([[#{common.errors.unexpected}]])
+
+      if (opener) {
+        window.close()
+      } else {
+        window.stop()
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", initVerify)
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.6/axios.min.js"></script>
+</body>
+</html>

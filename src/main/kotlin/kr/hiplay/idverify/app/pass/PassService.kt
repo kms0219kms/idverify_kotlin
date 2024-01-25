@@ -24,6 +24,14 @@ import java.util.*
 import java.util.stream.Collectors
 
 
+interface IInitData {
+    val siteCd: String
+    val webSiteId: String
+    val webSiteIdHashing: String
+    val callbackUrl: String
+    val kcpBaseUrl: String
+}
+
 interface IHashData {
     val resCd: String
     val resMsg: String
@@ -35,12 +43,12 @@ interface IHashData {
 
 @Service
 class PassService {
-    private val siteCd = "AO0QE"
-    private val webSiteId = ""
-    private val webSiteIdHashing = "Y"
+    private val _siteCd = "AO0QE"
+    private val _webSiteId = ""
+    private val _webSiteIdHashing = "Y"
 
-    private val kcpBaseUrl = "https://stg-spl.kcp.co.kr" // KCP 테스트 서버
-    // val kcpBaseUrl = "https://spl.kcp.co.kr"; // KCP 운영 서버
+    private val kcpApiBaseUrl = "https://stg-spl.kcp.co.kr" // KCP 테스트 서버
+    // val kcpApiBaseUrl = "https://spl.kcp.co.kr"; // KCP 운영 서버
 
     private fun getSerializedCert(certType: String): String {
         val certFile = when {
@@ -51,7 +59,7 @@ class PassService {
             else -> File(this::class.java.classLoader.getResource("kcp/certificate/splCert.pem")?.toURI()!!)
         }
 
-        return certFile.readText(Charsets.UTF_8)
+        return certFile.readText(Charsets.UTF_8).replace("\r", "").replace("\n", "")
     }
 
     private fun getCurrentTime(): String {
@@ -72,9 +80,7 @@ class PassService {
                     "-----END"
                 )
             }
-            .collect(Collectors.joining())
-
-        println(strPriKeyData)
+            .collect(Collectors.joining()).replace("\r", "").replace("\n", "")
 
         val btArrPriKey = Base64.getDecoder().decode(strPriKeyData)
 
@@ -113,26 +119,38 @@ class PassService {
     }
 
     @Transactional
+    fun getInitialData(): IInitData {
+        return object : IInitData {
+            override val siteCd = _siteCd
+            override val webSiteId = _webSiteId
+            override val webSiteIdHashing = _webSiteIdHashing
+            override val callbackUrl = "http://localhost:8080/pass/callback.html"
+            override val kcpBaseUrl = "https://testcert.kcp.co.kr" // KCP 테스트 서버
+            // override val kcpBaseUrl = "https://cert.kcp.co.kr" // KCP 운영 서버
+        }
+    }
+
+    @Transactional
     fun getHash(orderId: String): IHashData {
         val ctType = "HAS"
         val taxNo = "000000"
 
         val formattedTime = getCurrentTime()
-        val hashInfo = "${siteCd}^${ctType}^${taxNo}^${formattedTime}"
+        val hashInfo = "${_siteCd}^${ctType}^${taxNo}^${formattedTime}"
         val hashData = makeSignatureData(hashInfo)
 
         val requestBody = buildJsonObject {
             put("kcp_cert_info", getSerializedCert("public"))
-            put("site_cd", siteCd)
+            put("site_cd", _siteCd)
             put("ordr_idxx", orderId)
             put("ct_type", ctType)
-            put("web_siteid", webSiteId)
+            put("web_siteid", _webSiteId)
             put("tax_no", taxNo)
             put("make_req_dt", formattedTime)
             put("kcp_sign_data", hashData)
         }
 
-        val requestUrl = URL("${kcpBaseUrl}/std/certpass")
+        val requestUrl = URL("${kcpApiBaseUrl}/std/certpass")
 
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
@@ -143,11 +161,6 @@ class PassService {
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
         val responseBody = jacksonObjectMapper().readTree(response.body())
-
-        println(response.toString())
-        println(responseBody.toString())
-        println("==========================")
-        println(requestBody.toString())
 
         return object : IHashData {
             override val orderId = orderId

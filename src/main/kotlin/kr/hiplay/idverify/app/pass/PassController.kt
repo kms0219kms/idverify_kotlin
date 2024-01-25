@@ -28,4 +28,17 @@ class PassController(var passService: PassService) {
 
         return "identify/start"
     }
+
+    @GetMapping("/request.html")
+    fun openRequest(model: Model): String {
+        val initialData = passService.getInitialData()
+
+        model["pass_siteCd"] = initialData.siteCd
+        model["pass_webSiteId"] = initialData.webSiteId
+        model["pass_webSiteIdHashing"] = initialData.webSiteIdHashing
+        model["pass_callbackUrl"] = initialData.callbackUrl
+        model["pass_kcpBaseUrl"] = initialData.kcpBaseUrl
+
+        return "identify/pass/request"
+    }
 }

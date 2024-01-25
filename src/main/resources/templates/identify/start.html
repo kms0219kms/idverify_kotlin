@@ -19,12 +19,14 @@
   <p class="description">
     <img alt="Loading" class="loading" src="/images/loading_dark.png">
     <span th:text="#{verify.loading}">
-        인증 정보를 가져오는 중입니다...
-      </span>
+          인증 정보를 가져오는 중입니다...
+        </span>
   </p>
-
-  <!-- FIXME: include 대신 Controller에서 미리 계산된 값 가져와야 함 -->
-  <!-- <div th:replace="${'identify/' + provider + '/request'} :: request"></div>-->
 </main>
+
+<section th:replace="${'identify/' + provider + '/script'} :: request"></section>
+
+<script src="https://cdn.toss.im/cert/v1" th:if="provider == 'toss'"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.6/axios.min.js"></script>
 </body>
 </html>
