@@ -42,24 +42,20 @@
   <input name="param_opt_1" type="hidden" value="opt1"/>
   <input name="param_opt_2" type="hidden" value="opt2"/>
   <input name="param_opt_3" type="hidden" value="opt3"/>
-  </form>
+</form>
 
 <script th:inline="javascript">
-  function getHashData() {
-    return axios.get("/api/pass/getHashData.do");
-  }
-
   async function initVerify() {
     try {
-      const hashData = await getHashData()
+      const {data: hashData} = await axios.get("/api/pass/getHashData.do")
 
       // 해시 데이터 입력
-      document.querySelector('form[name="form_auth"] input[name="ordr_idxx"]').value = hashData.data.orderId
-      document.querySelector('form[name="form_auth"] input[name="up_hash"]').value = hashData.data.upHash
+      document.querySelector('form[name="form_auth"] input[name="ordr_idxx"]').value = hashData.orderId
+      document.querySelector('form[name="form_auth"] input[name="up_hash"]').value = hashData.upHash
       document.querySelector(
-          'form[name="form_auth"] input[name="kcp_merchant_time"]').value = hashData.data.kcpMerchantTime
+          'form[name="form_auth"] input[name="kcp_merchant_time"]').value = hashData.kcpMerchantTime
       document.querySelector(
-          'form[name="form_auth"] input[name="kcp_cert_lib_ver"]').value = hashData.data.kcpCertLibVer
+          'form[name="form_auth"] input[name="kcp_cert_lib_ver"]').value = hashData.kcpCertLibVer
 
       // 본인인증 요청
       self.name = "auth_popup";

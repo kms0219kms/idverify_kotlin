@@ -1,4 +1,4 @@
-package kr.hiplay.idverify.app.pass
+package kr.hiplay.idverify_web.app.pass
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.viascom.nanoid.NanoId

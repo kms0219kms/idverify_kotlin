@@ -1,0 +1,34 @@
+<section th:fragment="request" xmlns:th="http://www.thymeleaf.org">
+  <script th:inline="javascript">
+    const tossCert = TossCert();
+
+    async function initVerify() {
+      try {
+        const {data: txData} = await axios.get("/api/toss/getTxId.do")
+
+        tossCert.start({
+          type: 'redirect',
+
+          authUrl: txData.success.authUrl,
+          txId: txData.success.txId,
+
+          successUrl: location.origin + '/cert/toss/procRes.do',
+          failUrl: location.origin + '/cert/toss/procFail.do',
+        });
+      } catch {
+        alert([[#{common.errors.unexpected}]])
+
+        if (opener) {
+          window.close()
+        } else {
+          window.stop()
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", initVerify)
+  </script>
+
+  <script src="https://cdn.toss.im/cert/v1" th:if="provider == 'toss'"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.6/axios.min.js"></script>
+</section>

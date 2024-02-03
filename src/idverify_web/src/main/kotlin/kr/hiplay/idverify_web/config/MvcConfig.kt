@@ -1,4 +1,4 @@
-package kr.hiplay.idverify.config
+package kr.hiplay.idverify_web.config
 
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
@@ -13,7 +13,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver
 import java.util.*
 
 @Configuration
-@ComponentScan(basePackages = ["kr.hiplay.idverify.config"])
+@ComponentScan(basePackages = ["kr.hiplay.idverify_web.config"])
 class MvcConfig : WebMvcConfigurer {
     @Bean
     fun localeResolver(): LocaleResolver {
