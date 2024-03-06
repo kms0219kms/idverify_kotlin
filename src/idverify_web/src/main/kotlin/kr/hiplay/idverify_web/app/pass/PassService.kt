@@ -1,15 +1,21 @@
 package kr.hiplay.idverify_web.app.pass
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.viascom.nanoid.NanoId
+import kr.hiplay.idverify_web.utils.CryptoUtil
+
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+
+import io.viascom.nanoid.NanoId
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo
+
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 import java.io.File
 import java.net.URL
 import java.net.http.HttpClient
@@ -20,7 +26,7 @@ import java.security.Signature
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Base64
 import java.util.stream.Collectors
 
 
@@ -32,13 +38,24 @@ interface IInitData {
     val kcpBaseUrl: String
 }
 
-interface IHashData {
+interface IResponseBase {
     val resCd: String
     val resMsg: String
+}
+
+interface IHashData : IResponseBase {
     val upHash: String
     val orderId: String
     val kcpCertLibVer: String
     val kcpMerchantTime: String
+}
+
+interface IDecryptData : IResponseBase {
+    val certKey: String
+    val certIv: String
+    val authData: String
+    val specName: String
+    val redirectUrl: String
 }
 
 @Service
@@ -47,8 +64,12 @@ class PassService {
     private val _webSiteId = ""
     private val _webSiteIdHashing = "Y"
 
-    private val kcpApiBaseUrl = "https://stg-spl.kcp.co.kr" // KCP 테스트 서버
-    // val kcpApiBaseUrl = "https://spl.kcp.co.kr"; // KCP 운영 서버
+    private val _kcpApiBaseUrl = "https://stg-spl.kcp.co.kr" // KCP 테스트 서버
+
+    //    private val _kcpApiBaseUrl = "https://spl.kcp.co.kr"; // KCP 운영 서버
+    private val _kcpApiReqUrl = URL("$_kcpApiBaseUrl/std/certpass") // KCP API 요청 URL
+
+    private val httpClient = HttpClient.newBuilder().build()
 
     private fun getSerializedCert(certType: String): String {
         val certFile = when {
@@ -150,16 +171,14 @@ class PassService {
             put("kcp_sign_data", hashData)
         }
 
-        val requestUrl = URL("${kcpApiBaseUrl}/std/certpass")
 
-        val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
-            .uri(requestUrl.toURI())
+            .uri(_kcpApiReqUrl.toURI())
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
             .build()
 
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
         val responseBody = jacksonObjectMapper().readTree(response.body())
 
         return object : IHashData {
@@ -169,6 +188,118 @@ class PassService {
             override val upHash = responseBody.get("up_hash").asText()
             override val kcpCertLibVer = responseBody.get("kcp_cert_lib_ver").asText()
             override val kcpMerchantTime = responseBody.get("kcp_merchant_time").asText()
+        }
+    }
+
+    @Transactional
+    fun validateHash(orderId: String, certNo: String, dnHash: String): IResponseBase {
+        val ctType = "CHK"
+
+        val hashInfo = "${_siteCd}^${ctType}^${certNo}^${dnHash}"
+        val hashData = makeSignatureData(hashInfo)
+
+        val requestBody = buildJsonObject {
+            put("kcp_cert_info", getSerializedCert("public"))
+            put("site_cd", _siteCd)
+            put("ordr_idxx", orderId)
+            put("ct_type", ctType)
+            put("dn_hash", dnHash)
+            put("cert_no", certNo)
+            put("kcp_sign_data", hashData)
+        }
+
+        val request = HttpRequest.newBuilder()
+            .uri(_kcpApiReqUrl.toURI())
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+            .build()
+
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        val responseBody = jacksonObjectMapper().readTree(response.body())
+
+        // TODO: 요청 정보 DB처리
+
+        return object : IResponseBase {
+            override val resCd = responseBody.get("res_cd").asText()
+            override val resMsg = responseBody.get("res_msg").asText()
+        }
+    }
+
+    @Transactional
+    fun decryptUserData(orderId: String, certNo: String, encCertData: String, clientService: String): IResponseBase {
+        val ctType = "DEC"
+
+        val hashInfo = "${_siteCd}^${ctType}^${certNo}"
+        val hashData = makeSignatureData(hashInfo)
+
+        val requestBody = buildJsonObject {
+            put("kcp_cert_info", getSerializedCert("public"))
+            put("site_cd", _siteCd)
+            put("ordr_idxx", orderId)
+            put("ct_type", ctType)
+            put("cert_no", certNo)
+            put("enc_cert_Data", encCertData)
+            put("kcp_sign_data", hashData)
+        }
+
+        val request = HttpRequest.newBuilder()
+            .uri(_kcpApiReqUrl.toURI())
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+            .build()
+
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        val responseBody = jacksonObjectMapper().readTree(response.body())
+
+        val specName = "AES/CBC/PKCS5Padding"
+        val certKey = ""
+        val certIv = ""
+
+        return object : IDecryptData {
+            override val resCd = responseBody.get("res_cd").asText()
+            override val resMsg = responseBody.get("res_msg").asText()
+
+            override val authData: String
+                get() {
+                    val result = buildJsonObject {
+                        put("telecomId", responseBody.get("comm_id").asText())
+
+                        put("userName", responseBody.get("user_name").asText())
+                        put("userPhone", responseBody.get("phone_no").asText())
+                        put("userBirth", responseBody.get("birth_day").asText())
+                        put(
+                            "userGender", when {
+                                responseBody.get("sex_code").asText() === "01" -> "M"
+                                responseBody.get("sex_code").asText() === "02" -> "F"
+                                else -> "E"
+                            }
+                        )
+                        put(
+                            "userNationality", when {
+                                responseBody.get("local_code").asText() === "01" -> "KR"
+                                else -> "ETC"
+                            }
+                        )
+
+                        put("ci", responseBody.get("ci_url").asText())
+                        put("di", responseBody.get("di_url").asText())
+                    }
+
+                    return CryptoUtil().AESEncrypt(
+                        specName,
+                        certKey,
+                        certIv,
+                        buildJsonObject {
+                            put("pass", result)
+                        }.toString()
+                    )
+                }
+
+            override val specName = specName
+            override val certKey = certKey
+            override val certIv = certIv
+            override val redirectUrl: String
+                get() = TODO("Not yet implemented")
         }
     }
 }

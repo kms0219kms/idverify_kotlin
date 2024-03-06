@@ -1,0 +1,48 @@
+<section th:fragment="request">
+  <form action="https://sa.inicis.com/auth" method="post" name="form_auth">
+    <!-- 가맹점 정보 -->
+    <input name="mid" th:value="${unified_mid}" type="hidden"/>
+    <input name="mTxId" type="hidden" value=""/>
+
+    <!-- 요청구분 -->
+    <input name="reqSvcCd" type="hidden" value="01"/>
+
+    <!-- 요청정보 -->
+    <input name="authHash" type="hidden" value=""/>
+    <input name="flgFixedUser" type="hidden" value="N"/>
+    <input name="directAgency" th:value="${unified_directAgency}" type="hidden"/>
+
+    <input name="successUrl" th:value="${unified_successUrl}" type="hidden"/>
+    <input name="failUrl" th:value="${unified_failUrl}" type="hidden"/>
+
+    <!-- 리턴 암호화 고도화 ["isUseToken=Y" 개인정보 암호화 사용옵션 고정] -->
+    <input name="reservedMsg" type="hidden" value="isUseToken=Y"/>
+  </form>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.6/axios.min.js"></script>
+
+  <script th:inline="javascript">
+    async function initVerify() {
+      try {
+        const {data: hashData} = await axios.get("/api/unified/getHashData.do")
+
+        // 해시 데이터 입력
+        document.querySelector('form[name="form_auth"] input[name="mTxId"]').value = hashData.orderId
+        document.querySelector('form[name="form_auth"] input[name="authHash"]').value = hashData.authHash
+
+        // 본인인증 요청
+        document.querySelector('form[name="form_auth"]').submit()
+      } catch {
+        alert([[#{common.errors.unexpected}]])
+
+        if (opener) {
+          window.close()
+        } else {
+          window.stop()
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", initVerify)
+  </script>
+</section>

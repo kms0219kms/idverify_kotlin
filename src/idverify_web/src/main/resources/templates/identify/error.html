@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ko" th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport">
+  <title>본인 인증 | 하이플레이</title>
+</head>
+<body>
+<script th:inline="javascript">
+  alert([[${error}]] || [[#{common.errors.invalidrequest}]]);
+
+  window.close();
+  window.stop();
+</script>
+</body>
+</html>

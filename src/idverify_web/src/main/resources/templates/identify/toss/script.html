@@ -1,4 +1,7 @@
 <section th:fragment="request" xmlns:th="http://www.thymeleaf.org">
+  <script src="https://cdn.toss.im/cert/v1"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.6/axios.min.js"></script>
+
   <script th:inline="javascript">
     const tossCert = TossCert();
 
@@ -28,7 +31,4 @@
 
     document.addEventListener("DOMContentLoaded", initVerify)
   </script>
-
-  <script src="https://cdn.toss.im/cert/v1" th:if="provider == 'toss'"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.6/axios.min.js"></script>
 </section>
