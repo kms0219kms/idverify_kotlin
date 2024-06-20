@@ -1,7 +1,7 @@
-package kr.hiplay.idverify_web.app.unified
+package kr.hiplay.idverify_web.app.identify.unified
 
 import jakarta.servlet.http.HttpServletRequest
-import kr.hiplay.idverify_web.app.unified.dto.UnifiedCallbackDto
+import kr.hiplay.idverify_web.app.identify.unified.dto.UnifiedCallbackDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType
@@ -13,7 +13,7 @@ import org.springframework.web.servlet.LocaleResolver
 
 
 @Controller
-@RequestMapping("/unified")
+@RequestMapping("/identify/unified")
 class UnifiedController(var unifiedService: UnifiedService) {
     @Autowired
     private lateinit var request: HttpServletRequest
@@ -38,7 +38,10 @@ class UnifiedController(var unifiedService: UnifiedService) {
         return "identify/start"
     }
 
-    @PostMapping("/success.html", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @PostMapping(
+        "/success.html",
+        consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE]
+    )
     fun successCallback(
         model: Model,
         @RequestBody body: UnifiedCallbackDto

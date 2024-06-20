@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.app.unified
+package kr.hiplay.idverify_web.app.identify.unified
 
 import jakarta.servlet.http.HttpServletRequest
 

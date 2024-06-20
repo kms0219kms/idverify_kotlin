@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.app.toss
+package kr.hiplay.idverify_web.app.identify.toss
 
 import org.springframework.stereotype.Service
 

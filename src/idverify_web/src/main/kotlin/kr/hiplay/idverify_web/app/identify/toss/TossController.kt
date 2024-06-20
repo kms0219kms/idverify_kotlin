@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.app.toss
+package kr.hiplay.idverify_web.app.identify.toss
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.LocaleResolver
 
 
 @Controller
-@RequestMapping("/toss")
+@RequestMapping("/identify/signgate_toss")
 class TossController(var tossService: TossService) {
     @Autowired
     private lateinit var request: HttpServletRequest

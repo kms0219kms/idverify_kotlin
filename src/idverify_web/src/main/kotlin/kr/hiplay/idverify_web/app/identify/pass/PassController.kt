@@ -1,7 +1,7 @@
-package kr.hiplay.idverify_web.app.pass
+package kr.hiplay.idverify_web.app.identify.pass
 
 import jakarta.servlet.http.HttpServletRequest
-import kr.hiplay.idverify_web.app.pass.dto.PassCallbackDto
+import kr.hiplay.idverify_web.app.identify.pass.dto.PassCallbackDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.LocaleResolver
 
 
 @Controller
-@RequestMapping("/pass")
+@RequestMapping("/identify/pass")
 class PassController(var passService: PassService) {
     @Autowired
     private lateinit var request: HttpServletRequest
@@ -46,7 +46,10 @@ class PassController(var passService: PassService) {
         return "identify/pass/request"
     }
 
-    @PostMapping("/callback.html", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @PostMapping(
+        "/callback.html",
+        consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE]
+    )
     fun callback(
         model: Model,
         @RequestBody body: PassCallbackDto

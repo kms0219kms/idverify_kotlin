@@ -38,3 +38,8 @@ out/
 
 ### KCP Certificate files ###
 *.pem
+
+.env
+*.env
+.env.*
+!.env.example

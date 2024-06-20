@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.app.unified
+package kr.hiplay.idverify_web.app.identify.unified
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.viascom.nanoid.NanoId
@@ -109,7 +109,8 @@ class UnifiedService {
 
         return object : IDecryptData {
             override val resultCode = responseBody["resultCode"].asText()
-            override val resultMsg = URLDecoder.decode(responseBody["resultMsg"].asText(), "UTF-8")
+            override val resultMsg =
+                URLDecoder.decode(responseBody["resultMsg"].asText(), "UTF-8")
 
             override val authData: String
                 get() {

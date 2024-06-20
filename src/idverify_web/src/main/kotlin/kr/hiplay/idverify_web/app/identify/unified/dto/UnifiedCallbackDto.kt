@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.app.unified.dto
+package kr.hiplay.idverify_web.app.identify.unified.dto
 
 class UnifiedCallbackDto {
     lateinit var resultCode: String

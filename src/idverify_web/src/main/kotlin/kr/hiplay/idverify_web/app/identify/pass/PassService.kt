@@ -1,21 +1,16 @@
-package kr.hiplay.idverify_web.app.pass
+package kr.hiplay.idverify_web.app.identify.pass
 
-import kr.hiplay.idverify_web.utils.CryptoUtil
-
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.viascom.nanoid.NanoId
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-
-import io.viascom.nanoid.NanoId
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-
+import kr.hiplay.idverify_web.utils.CryptoUtil
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo
-
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
 import java.io.File
 import java.net.URL
 import java.net.http.HttpClient
@@ -26,7 +21,7 @@ import java.security.Signature
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Base64
+import java.util.*
 import java.util.stream.Collectors
 
 
@@ -74,10 +69,14 @@ class PassService {
     private fun getSerializedCert(certType: String): String {
         val certFile = when {
             (certType === "private") -> File(
-                this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")?.toURI()!!
+                this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")
+                    ?.toURI()!!
             )
 
-            else -> File(this::class.java.classLoader.getResource("kcp/certificate/splCert.pem")?.toURI()!!)
+            else -> File(
+                this::class.java.classLoader.getResource("kcp/certificate/splCert.pem")
+                    ?.toURI()!!
+            )
         }
 
         return certFile.readText(Charsets.UTF_8).replace("\r", "").replace("\n", "")
@@ -91,7 +90,10 @@ class PassService {
     }
 
     private fun loadSplMctPrivateKeyPKCS8(): PrivateKey {
-        val file = File(this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")?.toURI()!!)
+        val file = File(
+            this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")
+                ?.toURI()!!
+        )
         val privateKeyPassword = "changeit"
 
         val strPriKeyData = file.readLines()
@@ -107,7 +109,11 @@ class PassService {
 
         val derSeq = ASN1Sequence.getInstance(btArrPriKey)
         val encPkcs8PriKeyInfo =
-            PKCS8EncryptedPrivateKeyInfo(org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(derSeq))
+            PKCS8EncryptedPrivateKeyInfo(
+                org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(
+                    derSeq
+                )
+            )
 
         val pemKeyConverter = JcaPEMKeyConverter()
         val decProvider =
@@ -226,7 +232,12 @@ class PassService {
     }
 
     @Transactional
-    fun decryptUserData(orderId: String, certNo: String, encCertData: String, clientService: String): IResponseBase {
+    fun decryptUserData(
+        orderId: String,
+        certNo: String,
+        encCertData: String,
+        clientService: String
+    ): IResponseBase {
         val ctType = "DEC"
 
         val hashInfo = "${_siteCd}^${ctType}^${certNo}"

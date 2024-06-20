@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko" th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport">
-  <title>본인 인증 | 하이플레이</title>
+
+  <title th:text="${'본인 인증 | ' + serviceName}"></title>
 
   <link href="https://cdn.jsdelivr.net" rel="preconnect">
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -11,19 +13,22 @@
 
   <link href="/css/style.css" rel="stylesheet"/>
 </head>
+
 <body>
 <main>
   <h3 class="title" th:text="#{verify.title}">
     인증 중
   </h3>
+
   <p class="description">
     <img alt="Loading" class="loading" src="/images/loading_dark.png">
     <span th:text="#{verify.loading}">
-          인증 정보를 가져오는 중입니다...
-        </span>
+            인증 정보를 가져오는 중입니다...
+      </span>
   </p>
 </main>
 
 <section th:replace="~{${'identify/' + provider + '/script'} :: request}"></section>
 </body>
+
 </html>

@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.app.pass
+package kr.hiplay.idverify_web.app.identify.pass
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
