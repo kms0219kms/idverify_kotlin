@@ -25,7 +25,7 @@ class BridgeService {
         val collection: MongoCollection<Document> = database.getCollection("clients")
         val filter: Bson = Filters.eq("id", clientId)
         val clientInfo: Document = collection.find(filter).first()
-            ?: throw ClientInfoException("[CEX-0001] 존재하지 않는 사이트 정보입니다.")
+            ?: throw ClientInfoException("[CEX-0002] 존재하지 않는 사이트 정보입니다.")
 
         return clientInfo
     }

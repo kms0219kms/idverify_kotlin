@@ -18,7 +18,12 @@ class CryptoUtil {
      * @param ivString  암호화 iv값
      * @param plainText 암호화할 원본 string 텍스트 값
      */
-    fun AESEncrypt(specName: String, keyString: String, ivString: String, plainText: String): String {
+    fun AESEncrypt(
+        specName: String,
+        keyString: String,
+        ivString: String,
+        plainText: String
+    ): String {
         val encryptionKeyBytes: ByteArray = keyString.toByteArray(StandardCharsets.UTF_8)
         val key: SecretKey = SecretKeySpec(encryptionKeyBytes, "AES")
         val iv = IvParameterSpec(ivString.toByteArray())
@@ -26,7 +31,8 @@ class CryptoUtil {
         val cipher: Cipher = Cipher.getInstance(specName)
         cipher.init(Cipher.ENCRYPT_MODE, key, iv)
 
-        val encrypted: ByteArray = cipher.doFinal(plainText.toByteArray(StandardCharsets.UTF_8))
+        val encrypted: ByteArray =
+            cipher.doFinal(plainText.toByteArray(StandardCharsets.UTF_8))
         return String(Base64.getEncoder().encode(encrypted))
     }
 
@@ -38,7 +44,12 @@ class CryptoUtil {
      * @param ivString   암호화 iv값
      * @param cipherText 복호화할 암호화된 string 텍스트 값
      */
-    fun AESDecrypt(specName: String, keyString: String, ivString: String, cipherText: String): String {
+    fun AESDecrypt(
+        specName: String,
+        keyString: String,
+        ivString: String,
+        cipherText: String
+    ): String {
         val encryptionKeyBytes: ByteArray = keyString.toByteArray(StandardCharsets.UTF_8)
         val key: SecretKey = SecretKeySpec(encryptionKeyBytes, "AES")
         val iv = IvParameterSpec(ivString.toByteArray())

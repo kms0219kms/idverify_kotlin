@@ -7,7 +7,8 @@
   <title>본인 인증 | 하이플레이</title>
 </head>
 <body>
-<form method="post" name="form_auth" target="auth_popup" th:action="${pass_kcpBaseUrl} + '/kcp_cert/cert_view.jsp'">
+<form method="post" name="form_auth" target="auth_popup"
+      th:action="${pass_kcpBaseUrl} + '/kcp_cert/cert_view.jsp'">
   <!-- 요청정보 -->
   <input name="ordr_idxx" type="hidden" value=""/>
   <input name="up_hash" type="hidden" value=""/>
@@ -25,11 +26,13 @@
   <input name="Ret_URL" th:value="${pass_callbackUrl}" type="hidden"/>
 
   <!-- cert_otp_use 필수 (메뉴얼 참고)
-  Y : 실명 확인 + OTP 점유 확인 -->
+  Y : 실명 확인 + OTP 점유 확인, N : 실명 확인 only -->
   <input name="cert_otp_use" type="hidden" value="Y"/>
 
   <!-- 리턴 암호화 고도화 -->
   <input name="cert_enc_use_ext" type="hidden" value="Y"/>
+
+  <input name="cert_able_yn" type="hidden" value=""/>
   <input name="res_cd" type="hidden" value=""/>
   <input name="res_msg" type="hidden" value=""/>
 
@@ -51,8 +54,10 @@
       const {data: hashData} = await axios.get("/api/pass/getHashData.do")
 
       // 해시 데이터 입력
-      document.querySelector('form[name="form_auth"] input[name="ordr_idxx"]').value = hashData.orderId
-      document.querySelector('form[name="form_auth"] input[name="up_hash"]').value = hashData.upHash
+      document.querySelector(
+          'form[name="form_auth"] input[name="ordr_idxx"]').value = hashData.orderId
+      document.querySelector(
+          'form[name="form_auth"] input[name="up_hash"]').value = hashData.upHash
       document.querySelector(
           'form[name="form_auth"] input[name="kcp_merchant_time"]').value = hashData.kcpMerchantTime
       document.querySelector(

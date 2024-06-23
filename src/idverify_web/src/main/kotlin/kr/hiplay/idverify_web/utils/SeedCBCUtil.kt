@@ -1072,7 +1072,16 @@ object KISA_SEED_CBC {
     // L0, L1 : left input values at each round
     // R0, R1 : right input values at each round
     // K : round keys at each round
-    private fun SeedRound(T: IntArray, LR: IntArray, L0: Int, L1: Int, R0: Int, R1: Int, K: IntArray, K_offset: Int) {
+    private fun SeedRound(
+        T: IntArray,
+        LR: IntArray,
+        L0: Int,
+        L1: Int,
+        R0: Int,
+        R1: Int,
+        K: IntArray,
+        K_offset: Int
+    ) {
         T[0] = LR[R0] xor K[K_offset + 0]
         T[1] = LR[R1] xor K[K_offset + 1]
         T[1] = T[1] xor T[0]
@@ -1122,7 +1131,13 @@ object KISA_SEED_CBC {
     private const val ABCD_C = 2
     private const val ABCD_D = 3
 
-    private fun RoundKeyUpdate0(T: IntArray, K: IntArray, K_offset: Int, ABCD: IntArray, KC: Int) {
+    private fun RoundKeyUpdate0(
+        T: IntArray,
+        K: IntArray,
+        K_offset: Int,
+        ABCD: IntArray,
+        KC: Int
+    ) {
         T[0] = ABCD[ABCD_A] + ABCD[ABCD_C] - KC
         T[1] = ABCD[ABCD_B] + KC - ABCD[ABCD_D]
         K[K_offset + 0] = SS0[GetB0(T[0]).toInt() and 0x0ff] xor SS1[GetB1(
@@ -1140,7 +1155,13 @@ object KISA_SEED_CBC {
         ABCD[ABCD_B] = ((ABCD[ABCD_B] shr 8) and 0x00ffffff) xor (T[0] shl 24)
     }
 
-    private fun RoundKeyUpdate1(T: IntArray, K: IntArray, K_offset: Int, ABCD: IntArray, KC: Int) {
+    private fun RoundKeyUpdate1(
+        T: IntArray,
+        K: IntArray,
+        K_offset: Int,
+        ABCD: IntArray,
+        KC: Int
+    ) {
         T[0] = ABCD[ABCD_A] + ABCD[ABCD_C] - KC
         T[1] = ABCD[ABCD_B] + KC - ABCD[ABCD_D]
         K[K_offset + 0] = SS0[GetB0(T[0]).toInt() and 0x0ff] xor SS1[GetB1(
@@ -1287,7 +1308,12 @@ object KISA_SEED_CBC {
     }
 
 
-    fun SEED_CBC_init(pInfo: KISA_SEED_INFO?, enc: KISA_ENC_DEC, pbszUserKey: ByteArray?, pbszIV: ByteArray?): Int {
+    fun SEED_CBC_init(
+        pInfo: KISA_SEED_INFO?,
+        enc: KISA_ENC_DEC,
+        pbszUserKey: ByteArray?,
+        pbszIV: ByteArray?
+    ): Int {
         val ABCD = IntArray(4) // Iuput/output values at each rounds(각 라운드 입/출력)
         val T = IntArray(2) // Temporary variable
 
@@ -1344,7 +1370,13 @@ object KISA_SEED_CBC {
     }
 
 
-    fun SEED_CBC_Process(pInfo: KISA_SEED_INFO?, `in`: IntArray?, inLen: Int, out: IntArray?, outLen: IntArray): Int {
+    fun SEED_CBC_Process(
+        pInfo: KISA_SEED_INFO?,
+        `in`: IntArray?,
+        inLen: Int,
+        out: IntArray?,
+        outLen: IntArray
+    ): Int {
         var nCurrentCount = BLOCK_SIZE_SEED
         var pdwXOR: IntArray? = null
         var in_offset = 0
@@ -1364,7 +1396,13 @@ object KISA_SEED_CBC {
             while (nCurrentCount <= inLen) {
                 BLOCK_XOR_CBC(out, out_offset, `in`, in_offset, pdwXOR, pdwXOR_offset)
 
-                KISA_SEED_Encrypt_Block_forCBC(out, out_offset, out, out_offset, pInfo.seed_key)
+                KISA_SEED_Encrypt_Block_forCBC(
+                    out,
+                    out_offset,
+                    out,
+                    out_offset,
+                    pInfo.seed_key
+                )
 
                 pdwXOR = out
                 pdwXOR_offset = out_offset
@@ -1386,7 +1424,13 @@ object KISA_SEED_CBC {
             pdwXOR_offset = 0
 
             while (nCurrentCount <= inLen) {
-                KISA_SEED_Decrypt_Block_forCBC(`in`, in_offset, out, out_offset, pInfo.seed_key)
+                KISA_SEED_Decrypt_Block_forCBC(
+                    `in`,
+                    in_offset,
+                    out,
+                    out_offset,
+                    pInfo.seed_key
+                )
 
                 BLOCK_XOR_CBC(out, out_offset, out, out_offset, pdwXOR, pdwXOR_offset)
 
@@ -1403,14 +1447,24 @@ object KISA_SEED_CBC {
 
 
             Common.memcpy(pInfo.ivec, pdwXOR, pdwXOR_offset, BLOCK_SIZE_SEED)
-            Common.memcpy(pInfo.cbc_last_block, out, out_offset - BLOCK_SIZE_SEED_INT, BLOCK_SIZE_SEED)
+            Common.memcpy(
+                pInfo.cbc_last_block,
+                out,
+                out_offset - BLOCK_SIZE_SEED_INT,
+                BLOCK_SIZE_SEED
+            )
         }
 
         return 1
     }
 
 
-    fun SEED_CBC_Close(pInfo: KISA_SEED_INFO?, out: IntArray?, out_offset: Int, outLen: IntArray): Int {
+    fun SEED_CBC_Close(
+        pInfo: KISA_SEED_INFO?,
+        out: IntArray?,
+        out_offset: Int,
+        outLen: IntArray
+    ): Int {
         val nPaddngLeng: Int
         var i: Int
 
@@ -1428,13 +1482,21 @@ object KISA_SEED_CBC {
             }
             BLOCK_XOR_CBC(pInfo.cbc_buffer, 0, pInfo.cbc_buffer, 0, pInfo.ivec, 0)
 
-            KISA_SEED_Encrypt_Block_forCBC(pInfo.cbc_buffer, 0, out, out_offset, pInfo.seed_key)
+            KISA_SEED_Encrypt_Block_forCBC(
+                pInfo.cbc_buffer,
+                0,
+                out,
+                out_offset,
+                pInfo.seed_key
+            )
 
             outLen[0] = BLOCK_SIZE_SEED
 
             return 1
         } else {
-            nPaddngLeng = Common.get_byte_for_int(pInfo.cbc_last_block, BLOCK_SIZE_SEED - 1, ENDIAN).toInt()
+            nPaddngLeng =
+                Common.get_byte_for_int(pInfo.cbc_last_block, BLOCK_SIZE_SEED - 1, ENDIAN)
+                    .toInt()
 
 
             if (nPaddngLeng > 0 && nPaddngLeng <= BLOCK_SIZE_SEED) {
@@ -1452,7 +1514,11 @@ object KISA_SEED_CBC {
 
 
     fun SEED_CBC_Encrypt(
-        pbszUserKey: ByteArray, pbszIV: ByteArray, message: ByteArray, message_offset: Int, message_length: Int
+        pbszUserKey: ByteArray,
+        pbszIV: ByteArray,
+        message: ByteArray,
+        message_offset: Int,
+        message_length: Int
     ): ByteArray {
         val info = KISA_SEED_INFO()
         val outbuf: IntArray?
@@ -1491,7 +1557,11 @@ object KISA_SEED_CBC {
 
 
     fun SEED_CBC_Decrypt(
-        pbszUserKey: ByteArray, pbszIV: ByteArray, message: ByteArray, message_offset: Int, message_length: Int
+        pbszUserKey: ByteArray,
+        pbszIV: ByteArray,
+        message: ByteArray,
+        message_offset: Int,
+        message_length: Int
     ): ByteArray? {
         val info = KISA_SEED_INFO()
         val outbuf: IntArray?
@@ -1624,13 +1694,15 @@ object KISA_SEED_CBC {
                 val mask_value = 0x0ff shl shift_value
                 val mask_value2 = mask_value.inv()
                 val value2 = (value.toInt() and 0x0ff) shl shift_value
-                dst[b_offset / 4] = (dst[b_offset / 4] and mask_value2) or (value2 and mask_value)
+                dst[b_offset / 4] =
+                    (dst[b_offset / 4] and mask_value2) or (value2 and mask_value)
             } else {
                 val shift_value = (b_offset % 4) * 8
                 val mask_value = 0x0ff shl shift_value
                 val mask_value2 = mask_value.inv()
                 val value2 = (value.toInt() and 0x0ff) shl shift_value
-                dst[b_offset / 4] = (dst[b_offset / 4] and mask_value2) or (value2 and mask_value)
+                dst[b_offset / 4] =
+                    (dst[b_offset / 4] and mask_value2) or (value2 and mask_value)
             }
         }
 
@@ -1648,7 +1720,13 @@ object KISA_SEED_CBC {
             }
         }
 
-        fun byte_to_int(dst: IntArray, dst_offset: Int, src: ByteArray, src_offset: Int, ENDIAN: Int) {
+        fun byte_to_int(
+            dst: IntArray,
+            dst_offset: Int,
+            src: ByteArray,
+            src_offset: Int,
+            ENDIAN: Int
+        ) {
             if (ENDIAN == BIG_ENDIAN) {
                 dst[dst_offset] =
                     ((0x0ff and src[src_offset].toInt()) shl 24) or ((0x0ff and src[src_offset + 1].toInt()) shl 16) or ((0x0ff and src[src_offset + 2].toInt()) shl 8) or ((0x0ff and src[src_offset + 3].toInt()))

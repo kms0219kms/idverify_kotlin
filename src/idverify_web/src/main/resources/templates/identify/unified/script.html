@@ -27,8 +27,10 @@
         const {data: hashData} = await axios.get("/api/unified/getHashData.do")
 
         // 해시 데이터 입력
-        document.querySelector('form[name="form_auth"] input[name="mTxId"]').value = hashData.orderId
-        document.querySelector('form[name="form_auth"] input[name="authHash"]').value = hashData.authHash
+        document.querySelector(
+            'form[name="form_auth"] input[name="mTxId"]').value = hashData.orderId
+        document.querySelector(
+            'form[name="form_auth"] input[name="authHash"]').value = hashData.authHash
 
         // 본인인증 요청
         document.querySelector('form[name="form_auth"]').submit()

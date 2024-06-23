@@ -11,465 +11,10 @@
   <link crossorigin="anonymous" href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect"/>
 
-  <link href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css"
-        rel="stylesheet"/>
+  <link href="/css/vendors/normalize.min.css" rel="stylesheet"/>
+  <link href="/css/reset.css" rel="stylesheet"/>
 
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,300,0,0"
-        rel="stylesheet"/>
-
-  <style>
-    /** Global */
-    html,
-    body,
-    * {
-      font-family: "Wanted Sans Variable", "Wanted Sans", sans-serif;
-    }
-
-    main {
-      padding: 30px 60px;
-    }
-
-    li {
-      list-style: none;
-    }
-
-    .material-symbols-rounded {
-      user-select: none;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: rgb(23, 23, 23);
-      }
-
-      .material-symbols-rounded {
-        color: #fff;
-      }
-    }
-
-    @media (max-width: 768px) {
-      main {
-        padding: 30px 20px;
-      }
-    }
-
-    /** Global 커스텀 스타일 */
-    input[type='checkbox'] {
-      display: inline-block;
-      vertical-align: middle;
-      background-origin: border-box;
-
-      appearance: none;
-      padding: 0;
-
-      color: #1672e4;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 0.25rem;
-
-      user-select: none;
-      flex-shrink: 0;
-
-      print-color-adjust: exact;
-      -webkit-print-color-adjust: exact;
-    }
-
-    input[type='checkbox']:checked {
-      border-color: transparent;
-
-      background-color: currentColor;
-      background-size: 100% 100%;
-
-      background-position: center;
-      background-repeat: no-repeat;
-
-      background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-    }
-
-    @media (max-width: 486px) {
-      .mobile-optional {
-        display: none;
-      }
-    }
-
-    /** 헤더 섹션 */
-    header {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .header-text h1 {
-      color: #000;
-      font-size: 1.58em;
-      font-weight: 700;
-      letter-spacing: -0.05em;
-
-      margin-block: 0;
-      padding-bottom: 30px;
-    }
-
-    .header-text .header-method-wrap {
-      display: flex;
-      align-items: center;
-      gap: 15.8px;
-
-      margin-bottom: 40px;
-    }
-
-    .header-text .header-method-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 5px;
-    }
-
-    .header-text .header-method-wrap h2 {
-      color: #555;
-      font-size: 1.1em;
-      font-weight: 500;
-      letter-spacing: -0.05em;
-      line-height: 1.6em;
-
-      margin-block: 0;
-    }
-
-    .header-controller i {
-      font-size: 30px;
-      cursor: pointer;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .header-text h1 {
-        color: #fff;
-      }
-
-      .header-text .header-method-wrap h2 {
-        color: #aaa;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .header-text h1 {
-        font-size: 1.2em;
-      }
-
-
-      .header-text .header-method-icon {
-        width: 44px;
-        height: 44px;
-      }
-
-      .header-text .header-method-wrap h2 {
-        font-size: 1em;
-      }
-    }
-
-    /** 인증서 정보 인풋 */
-    .auth_input {
-      position: relative;
-      display: inline-block;
-
-      width: 100%;
-      height: 76px;
-      margin: 3px 0;
-    }
-
-    .auth_input label {
-      position: absolute;
-      top: 26px;
-      left: 0;
-
-      font-size: 16px;
-      cursor: text;
-      transition: 0.3s;
-    }
-
-    .auth_input input {
-      width: 100%;
-      padding: 4px 0;
-
-      margin-top: 12px;
-
-      font-size: 1.2em;
-      line-height: 36px;
-      cursor: text;
-
-      background: transparent;
-      border: transparent;
-      border-bottom: .5px solid #999;
-      outline: none;
-
-      transition: all 0.2s ease;
-      box-sizing: border-box;
-    }
-
-    .auth_input input:focus + label,
-    .auth_input input:valid + label {
-      top: 0;
-      font-size: 12px;
-      color: #0456bb;
-    }
-
-    .auth_input input:focus {
-      border-bottom: 1.58px solid #0456bb;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .auth_input input {
-        color: #fff;
-        border-bottom: 1.58px solid #aaa;
-      }
-
-      .auth_input label {
-        color: #aaa;
-      }
-
-      .auth_input input:focus + label,
-      .auth_input input:valid + label {
-        color: #55a1ff;
-      }
-
-      .auth_input input:focus {
-        border-bottom: 1.58px solid #55a1ff;
-      }
-    }
-
-    /** 인증서 이용 동의 */
-    .agree_area {
-      margin-top: 30px;
-      padding: 15px 20px;
-      border: 1px solid #ddd;
-      border-radius: 0.25rem;
-
-      color: #333;
-      font-size: 12px;
-    }
-
-    .agree_area .agree_all_check {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      color: #333;
-
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .agree_area .agree_all_check input {
-      width: 18px;
-      height: 18px;
-    }
-
-    .agree_area .agree_all_check label {
-      color: #000;
-    }
-
-    .agree_area li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      padding: 0 5px 10px;
-    }
-
-    .agree_area li:last-child {
-      padding-bottom: 0;
-    }
-
-    .agree_area li div {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .agree_area li input {
-      width: 14px;
-      height: 14px;
-    }
-
-    .agree_area li a {
-      color: #333;
-      padding-inline-end: 20px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .agree_area {
-        border-color: #aaa;
-        color: #aaa;
-      }
-
-      .agree_area .agree_all_check label {
-        color: #fff;
-      }
-
-      .agree_area li a {
-        color: #aaa;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .agree_area ul {
-        padding-inline-start: 10px;
-      }
-
-      .agree_area li a {
-        padding-inline-end: 10px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .agree_area li a {
-        display: none;
-      }
-    }
-
-    /** 컨트롤 버튼 */
-    .control_btns {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      margin-top: 30px;
-      padding: 20px 0;
-    }
-
-    .control_btns button {
-      width: 28%;
-      height: 42px;
-
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background: #fff;
-
-      cursor: pointer;
-      text-align: center;
-      transition: background-color 0.1s ease;
-    }
-
-    .control_btns button:last-child {
-      background: #1672e4;
-      border: 1px solid #0456bb;
-    }
-
-    .control_btns button:last-child span {
-      color: #ccc;
-    }
-
-    .control_btns button:last-child:disabled {
-      background: #ddd;
-      border: 1px solid #ddd;
-    }
-
-    .control_btns button:last-child:disabled span {
-      color: #555;
-    }
-
-    .control_btns button span {
-      color: #333;
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .control_btns button {
-        background: #333;
-        border-color: #555;
-      }
-
-      .control_btns button span {
-        color: #fff;
-      }
-
-      .control_btns button:last-child:disabled {
-        background: #333;
-        border: 1px solid #333;
-      }
-
-      .control_btns button:last-child:disabled span {
-        color: #aaa;
-      }
-
-      .control_btns button:last-child span {
-        color: #fff;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .control_btns button {
-        width: 110px;
-      }
-    }
-
-    /** 각 인증수단 별 커스텀 색상 */
-    .header-method-icon[data-provider="PASS"] {
-      background: #ffffff url("/images/bridge/app_SMS.png") no-repeat center;
-      background-size: cover;
-    }
-
-    .header-method-icon[data-provider="INICIS_CARD"] {
-      background: #ffffff url("/images/bridge/app_CARD.png") no-repeat center;
-      background-size: cover;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_YESKEY"] {
-      background: #ffffff url("/images/bridge/app_KFTC.svg") no-repeat center;
-      background-size: 75%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_KAKAO"] {
-      background: #f3d623 url("/images/bridge/app_KAKAO.png") no-repeat center;
-      background-size: 100%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_NAVER"] {
-      background: #03c75a url("/images/bridge/app_NAVER.png") no-repeat center;
-      background-size: cover;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_KOOKMIN"] {
-      background: #ffae00 url("/images/bridge/app_KOOKMIN.png") no-repeat center;
-      background-size: 100%;
-    }
-
-    .header-method-icon[data-provider="SIGNGATE_TOSS"] {
-      background: #ffffff url("/images/bridge/app_TOSS.png") no-repeat center;
-      background-size: 90%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_SHINHAN"] {
-      background: #ffffff url("/images/bridge/app_SHINHAN.png") no-repeat center;
-      background-size: 100%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_PAYCO"] {
-      background: #ffffff url("/images/bridge/app_PAYCO.png") no-repeat center;
-      background-size: cover;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_SPASS"] {
-      background: #1e4bc6 url("/images/bridge/app_SPASS.png") no-repeat center;
-      background-size: 85%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_BANKSALAD"] {
-      background: #ffffff url("/images/bridge/app_BANKSALAD.png") no-repeat center;
-      background-size: 85%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_KEBHANA"] {
-      background: #00b2a7 url("/images/bridge/app_KEBHANA.png") no-repeat center;
-      background-size: 100%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_KAKAOBANK"] {
-      background: #ffe300 url("/images/bridge/app_KAKAOBANK.png") no-repeat center;
-      background-size: 100%;
-    }
-
-    .header-method-icon[data-provider="UNIFIED_WOORI"] {
-      background: #0028a0 url("/images/bridge/app_WOORI.png") no-repeat center;
-      background-size: 90%;
-    }
-  </style>
+  <link href="/css/bridge.css" rel="stylesheet"/>
 </head>
 
 <body>
@@ -510,7 +55,9 @@
       th:action="${provider == 'PASS' || provider == 'SIGNGATE_TOSS' ? '/identify/'+provider.toLowerCase()+'/start.html' : ''}"
   >
     <input name="clientId" th:value="${clientId}" type="hidden"/>
-    <input name="provider" th:disabled="${provider == 'PASS' || provider == 'SIGNGATE_TOSS'}" th:value="${provider}"
+    <input name="provider"
+           th:disabled="${provider == 'PASS' || provider == 'SIGNGATE_TOSS'}"
+           th:value="${provider}"
            type="hidden"/>
 
     <div
@@ -525,8 +72,12 @@
         class="auth_input"
         th:if="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
     >
-      <input id="auth_birth" name="birthday" required
-             title="생년월일을 입력해주세요. (예. 20000116)" type="text"/>
+      <input class="virtual-input" data-kioskboard-placement="bottom"
+             data-kioskboard-type="numpad" data-value=" "
+             id="auth_birth"
+             maxlength="8" name="birthday" readonly
+             required title="생년월일을 입력해주세요. (예. 20000116)"
+             type="number"/>
       <label for="auth_birth">생년월일 (예. 19960309)</label>
     </div>
 
@@ -534,8 +85,12 @@
         class="auth_input"
         th:if="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
     >
-      <input id="auth_phone" name="phone" required title="휴대전화번호를 입력해주세요. (- 제외)"
-             type="text"/>
+      <input class="virtual-input" data-kioskboard-placement="bottom"
+             data-kioskboard-type="numpad" data-value=" "
+             id="auth_phone"
+             maxlength="11" name="phone" readonly
+             required title="휴대전화번호를 입력해주세요. (- 제외)"
+             type="tel"/>
       <label for="auth_phone">휴대전화번호 (- 제외)</label>
     </div>
 
@@ -594,7 +149,8 @@
         <span>이전</span>
       </button>
 
-      <button id="submit" th:disabled="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
+      <button id="submit"
+              th:disabled="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
               type="submit">
         <span>인증 진행</span>
       </button>
@@ -602,26 +158,16 @@
   </form>
 </main>
 
-<script src="https://code.jquery.com/jquery-4.0.0-beta.slim.min.js"></script>
+<script src="/js/vendors/jquery-4.0.0-beta.slim.min.js"></script>
+<script src="/js/vendors/kioskboard-aio-2.3.0.min.js"></script>
+<script src="/js/vendors/rsa.min.js"></script>
+
+<script src="/js/events.js"></script>
+<script src="/js/request.js"></script>
 
 <script th:inline="javascript">
-  $("#chk_all").change(function () {
-    const isChecked = $(this).is(":checked");
-
-    $("input[type='checkbox']").prop("checked", isChecked);
-    $("#submit").prop("disabled", !isChecked);
-  });
-
-  $(".agree_area ul input[type='checkbox']").change(function () {
-    const isAllChecked = $(".agree_area ul input[type='checkbox']").length ===
-        $(".agree_area ul input[type='checkbox']:checked").length;
-
-    $("#chk_all").prop("checked", isAllChecked);
-    $("#submit").prop("disabled", !isAllChecked);
-  });
-
   $("#backBtn").click(function () {
-    location.href = "start.html?clientId=" + [[${clientId}]]
+    location.href = "start.html?clientId=" + [[${clientId}]] + "&lang=" + [[${lang}]];
   });
 </script>
 </body>

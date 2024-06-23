@@ -41,7 +41,7 @@ class BridgeController {
         model["lang"] = localeResolver.resolveLocale(request)
 
         if (clientId.isNullOrEmpty() || clientId.isBlank()) {
-            model["error"] = "[CEX-0000] \"clientId\" 값은 필수입니다."
+            model["error"] = "[CEX-0001] \"clientId\" 값은 필수입니다."
             return "identify/error"
         }
 
@@ -74,12 +74,12 @@ class BridgeController {
         model["lang"] = localeResolver.resolveLocale(request)
 
         if (clientId.isNullOrEmpty() || clientId.isBlank()) {
-            model["error"] = "[CEX-0000] \"clientId\" 값은 필수입니다."
+            model["error"] = "[CEX-0001] \"clientId\" 값은 필수입니다."
             return "identify/error"
         }
 
         if (provider.isNullOrEmpty() || provider.isBlank()) {
-            model["error"] = "[CEX-0000] \"provider\" 값은 필수입니다."
+            model["error"] = "[CEX-0001] \"provider\" 값은 필수입니다."
             return "identify/error"
         }
 
@@ -100,7 +100,7 @@ class BridgeController {
                         .getString("id")
                 }.contains(provider)
             ) {
-                model["error"] = "[CEX-0002] 지원하지 않는 인증수단입니다."
+                model["error"] = "[CEX-0003] 지원하지 않는 인증수단입니다."
                 return "identify/error"
             }
         } catch (e: ClientInfoException) {
