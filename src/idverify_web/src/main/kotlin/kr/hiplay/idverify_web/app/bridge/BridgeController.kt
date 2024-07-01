@@ -3,7 +3,7 @@ package kr.hiplay.idverify_web.app.bridge
 import io.github.cdimascio.dotenv.dotenv
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import kr.hiplay.idverify_web.common.utils.DecodeUnicodeUtil
+import kr.hiplay.idverify_web.common.utils.EncodingUtil
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -20,6 +20,7 @@ import org.springframework.web.servlet.LocaleResolver
 @RequestMapping("/bridge")
 class BridgeController(var bridgeService: BridgeService) {
     private val dotenv = dotenv()
+    private val encodingUtil = EncodingUtil()
 
     @Autowired
     private lateinit var request: HttpServletRequest
@@ -38,7 +39,7 @@ class BridgeController(var bridgeService: BridgeService) {
         model: Model,
         @RequestParam("client_id", required = false) clientId: String?
     ): String {
-        model["serviceName"] = DecodeUnicodeUtil().convert(dotenv["SERVICE_NAME"])
+        model["serviceName"] = encodingUtil.decodeUnicode(dotenv["SERVICE_NAME"])
         model["lang"] = localeResolver.resolveLocale(request)
 
         if (clientId.isNullOrEmpty() || clientId.isBlank()) {
@@ -53,7 +54,7 @@ class BridgeController(var bridgeService: BridgeService) {
 
             // DB에 저장된 Service Name을 사용할 수 있으므로 덮어 쓴다.
             model["serviceName"] =
-                DecodeUnicodeUtil().convert(clientInfo.getString("name"))
+                encodingUtil.decodeUnicode(clientInfo.getString("name"))
 
             // 사용가능한 간편인증 리스트를 가져온다.
             model["providersList"] = clientInfo.getList("providers", Document::class.java)
@@ -73,7 +74,7 @@ class BridgeController(var bridgeService: BridgeService) {
         @RequestParam("client_id", required = false) clientId: String?,
         @RequestParam("provider", required = false) provider: String?
     ): String {
-        model["serviceName"] = DecodeUnicodeUtil().convert(dotenv["SERVICE_NAME"])
+        model["serviceName"] = encodingUtil.decodeUnicode(dotenv["SERVICE_NAME"])
         model["lang"] = localeResolver.resolveLocale(request)
 
         if (clientId.isNullOrEmpty() || clientId.isBlank()) {
@@ -96,7 +97,7 @@ class BridgeController(var bridgeService: BridgeService) {
 
             // DB에 저장된 Service Name을 사용할 수 있으므로 덮어 쓴다.
             model["serviceName"] =
-                DecodeUnicodeUtil().convert(clientInfo.getString("name"))
+                encodingUtil.decodeUnicode(clientInfo.getString("name"))
 
             // 사용가능한 간편인증 리스트에 이 provider가 있는지 확인한다.
             if (

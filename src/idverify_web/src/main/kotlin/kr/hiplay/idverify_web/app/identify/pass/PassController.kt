@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import kr.hiplay.idverify_web.app.bridge.ClientInfoException
 import kr.hiplay.idverify_web.app.identify.pass.dto.PassCallbackDto
-import kr.hiplay.idverify_web.common.utils.DecodeUnicodeUtil
+import kr.hiplay.idverify_web.common.utils.EncodingUtil
 import kr.hiplay.idverify_web.common.utils.URLUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -22,6 +22,7 @@ import java.net.URLDecoder
 @RequestMapping("/identify/pass")
 class PassController(var passService: PassService) {
     private val dotenv = dotenv()
+    private val encodingUtil = EncodingUtil()
 
     @Autowired
     private lateinit var request: HttpServletRequest
@@ -38,7 +39,7 @@ class PassController(var passService: PassService) {
         model: Model,
         @RequestParam("client_id", required = false) clientId: String?
     ): String {
-        model["serviceName"] = DecodeUnicodeUtil().convert(dotenv["SERVICE_NAME"])
+        model["serviceName"] = encodingUtil.decodeUnicode(dotenv["SERVICE_NAME"])
         model["lang"] = localeResolver.resolveLocale(request)
 
         if (clientId.isNullOrEmpty() || clientId.isBlank()) {
@@ -59,7 +60,7 @@ class PassController(var passService: PassService) {
         @RequestParam("client_id", required = false) clientId: String?
     ): String {
         try {
-            model["serviceName"] = DecodeUnicodeUtil().convert(dotenv["SERVICE_NAME"])
+            model["serviceName"] = encodingUtil.decodeUnicode(dotenv["SERVICE_NAME"])
             model["lang"] = localeResolver.resolveLocale(request)
 
             if (clientId.isNullOrEmpty() || clientId.isBlank()) {
@@ -93,7 +94,7 @@ class PassController(var passService: PassService) {
         model: Model,
         @ModelAttribute body: PassCallbackDto
     ): String {
-        model["serviceName"] = DecodeUnicodeUtil().convert(dotenv["SERVICE_NAME"])
+        model["serviceName"] = encodingUtil.decodeUnicode(dotenv["SERVICE_NAME"])
         model["lang"] = localeResolver.resolveLocale(request)
 
         // URL 인코딩된 응답값을 디코딩한다.

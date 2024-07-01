@@ -6,6 +6,7 @@ import kotlinx.serialization.json.put
 import kr.co.kcp.CT_CLI
 import kr.hiplay.idverify_web.app.bridge.BridgeService
 import kr.hiplay.idverify_web.common.utils.CryptoUtil
+import kr.hiplay.idverify_web.common.utils.EncodingUtil
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
@@ -63,6 +64,7 @@ class PassService {
     private var bridgeService = BridgeService()
 
     private val cc = CT_CLI()
+    private val encodingUtil = EncodingUtil()
     private val httpClient = HttpClient.newBuilder().build()
 
     private val _kcpApiBaseUrl = "https://stg-spl.kcp.co.kr" // KCP 테스트 서버
@@ -344,7 +346,6 @@ class PassService {
             val _encKey = passInfo.getString("enc_key")
 
             cc.decryptEncCert(_encKey, _siteCd, certNo, encCertData)
-            cc.setCharSetUtf8()
 
             return object : IDecryptData {
                 override val resCd = cc.getKeyValue("res_cd")
