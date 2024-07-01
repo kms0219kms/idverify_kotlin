@@ -1,7 +1,6 @@
 package kr.hiplay.idverify_web.app.identify.pass
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.viascom.nanoid.NanoId
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kr.co.kcp.CT_CLI
@@ -11,9 +10,9 @@ import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo
+import org.bson.Document
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.io.File
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -24,7 +23,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.stream.Collectors
 
 enum class EConnectionMethod(val libName: String) {
     API_SPL("KCP_SPL_API"),
@@ -72,22 +70,6 @@ class PassService {
 
     private val _kcpApiReqUrl = URL("$_kcpApiBaseUrl/std/certpass") // KCP API 요청 URL
 
-    private fun _getSplSerializedCert(certType: String): String {
-        val certFile = when {
-            (certType === "private") -> File(
-                this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")
-                    ?.toURI()!!
-            )
-
-            else -> File(
-                this::class.java.classLoader.getResource("kcp/certificate/splCert.pem")
-                    ?.toURI()!!
-            )
-        }
-
-        return certFile.readText(Charsets.UTF_8).replace("\r", "").replace("\n", "")
-    }
-
     private fun _getCurrentTime(pattern: String = "YYMMddHHmmss"): String {
         val currentTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
         val timeFormatter = DateTimeFormatter.ofPattern(pattern)
@@ -95,42 +77,32 @@ class PassService {
         return currentTime.format(timeFormatter)
     }
 
-    private fun _loadSplMctPrivateKeyPKCS8(): PrivateKey {
-        val file = File(
-            this::class.java.classLoader.getResource("kcp/certificate/splPrikeyPKCS8.pem")
-                ?.toURI()!!
-        )
-        val privateKeyPassword = "changeit"
+    private fun _loadSplMctPrivateKeyPKCS8(
+        passInfo: Document
+    ): PrivateKey {
+        val pemKeyConverter = JcaPEMKeyConverter()
 
-        val strPriKeyData = file.readLines()
-            .stream()
-            .filter { line: String ->
-                !line.startsWith("-----BEGIN") && !line.startsWith(
-                    "-----END"
-                )
-            }
-            .collect(Collectors.joining()).replace("\r", "").replace("\n", "")
-
-        val btArrPriKey = Base64.getDecoder().decode(strPriKeyData)
-
-        val derSeq = ASN1Sequence.getInstance(btArrPriKey)
         val encPkcs8PriKeyInfo =
             PKCS8EncryptedPrivateKeyInfo(
                 org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(
-                    derSeq
+                    ASN1Sequence.getInstance(
+                        Base64.getDecoder().decode(
+                            passInfo.getString("api_privatekey")
+                                .replace("\r", "").replace("\n", "")
+                        )
+                    )
                 )
             )
 
-        val pemKeyConverter = JcaPEMKeyConverter()
-        val decProvider =
-            JceOpenSSLPKCS8DecryptorProviderBuilder().build(privateKeyPassword.toCharArray())
-        val priKeyInfo = encPkcs8PriKeyInfo.decryptPrivateKeyInfo(decProvider)
+        val priKeyInfo = encPkcs8PriKeyInfo.decryptPrivateKeyInfo(
+            JceOpenSSLPKCS8DecryptorProviderBuilder().build(passInfo.getString("api_passpharse").toCharArray())
+        )
 
         return pemKeyConverter.getPrivateKey(priKeyInfo)
     }
 
-    private fun _makeSplSignatureData(targetData: String): String {
-        val priKey: PrivateKey = _loadSplMctPrivateKeyPKCS8()
+    private fun _makeSplSignatureData(targetData: String, passInfo: Document): String {
+        val priKey: PrivateKey = _loadSplMctPrivateKeyPKCS8(passInfo)
         val btArrTargetData = targetData.toByteArray(Charsets.UTF_8)
 
         val sign = Signature.getInstance("SHA256WithRSA")
@@ -140,15 +112,6 @@ class PassService {
         val btArrSignData: ByteArray = sign.sign()
 
         return Base64.getEncoder().encodeToString(btArrSignData)
-    }
-
-    @Transactional
-    fun createOrder(): String {
-        val orderId = NanoId.generate()
-
-        // TODO: 요청 정보 DB처리
-
-        return orderId
     }
 
     @Transactional
@@ -186,10 +149,10 @@ class PassService {
             val taxNo = "000000"
 
             val formattedTime = _getCurrentTime()
-            val hashData = _makeSplSignatureData("${_siteCd}^${ctType}^${taxNo}^${formattedTime}")
+            val hashData = _makeSplSignatureData("${_siteCd}^${ctType}^${taxNo}^${formattedTime}", passInfo)
 
             val requestBody = buildJsonObject {
-                put("kcp_cert_info", _getSplSerializedCert("public"))
+                put("kcp_cert_info", passInfo.getString("api_certificate"))
                 put("site_cd", _siteCd)
                 put("ordr_idxx", orderId)
                 put("ct_type", ctType)
@@ -254,11 +217,10 @@ class PassService {
             val _siteCd = passInfo.getString("api_site_cd")
             val ctType = "CHK"
 
-            val hashInfo = "${_siteCd}^${ctType}^${certNo}^${dnHash}"
-            val hashData = _makeSplSignatureData(hashInfo)
+            val hashData = _makeSplSignatureData("${_siteCd}^${ctType}^${certNo}^${dnHash}", passInfo)
 
             val requestBody = buildJsonObject {
-                put("kcp_cert_info", _getSplSerializedCert("public"))
+                put("kcp_cert_info", passInfo.getString("api_certificate"))
                 put("site_cd", _siteCd)
                 put("ordr_idxx", orderId)
                 put("ct_type", ctType)
@@ -311,11 +273,10 @@ class PassService {
             val _siteCd = passInfo.getString("api_site_cd")
             val ctType = "DEC"
 
-            val hashInfo = "${_siteCd}^${ctType}^${certNo}"
-            val hashData = _makeSplSignatureData(hashInfo)
+            val hashData = _makeSplSignatureData("${_siteCd}^${ctType}^${certNo}", passInfo)
 
             val requestBody = buildJsonObject {
-                put("kcp_cert_info", _getSplSerializedCert("public"))
+                put("kcp_cert_info", passInfo.getString("api_certificate"))
                 put("site_cd", _siteCd)
                 put("ordr_idxx", orderId)
                 put("ct_type", ctType)

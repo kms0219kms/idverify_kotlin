@@ -1,5 +1,6 @@
 package kr.hiplay.idverify_web.app.identify.pass
 
+import io.viascom.nanoid.NanoId
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import kr.hiplay.idverify_web.app.identify.pass.dto.PassHashRequestDto
@@ -60,7 +61,7 @@ class PassApiController(var passService: PassService) {
             return exception
         }
 
-        val orderId = passService.createOrder()
+        val orderId = NanoId.generate()
         val hashData = passService.getHash(clientId, orderId, kcpCertLibName)
 
         return hashData
