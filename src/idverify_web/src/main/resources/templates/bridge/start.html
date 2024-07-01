@@ -32,7 +32,7 @@
 
   <form action="request.html" class="cert-provider">
     <input name="lang" th:value="${lang}" type="hidden"/>
-    <input name="clientId" th:value="${clientId}" type="hidden"/>
+    <input name="client_id" th:value="${clientId}" type="hidden"/>
     <input name="provider" type="hidden" value=""/>
 
     <div class="cert-provider-btn" th:if="${providersList.contains('PASS')}">

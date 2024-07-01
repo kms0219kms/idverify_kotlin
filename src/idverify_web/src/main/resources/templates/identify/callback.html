@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" th:lang="${lang}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport">
+
+    <title th:text="${'본인 인증 | ' + serviceName}"></title>
+</head>
+
+<body>
+<form method="post" name="form_auth" th:action="${redirectUrl}">
+    <input name="specName" th:value="${specName}" type="hidden"/>
+    <input name="authData" th:value="${authData}" type="hidden"/>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('form[name="form_auth"]').submit()
+    })
+</script>
+</body>
+
+</html>

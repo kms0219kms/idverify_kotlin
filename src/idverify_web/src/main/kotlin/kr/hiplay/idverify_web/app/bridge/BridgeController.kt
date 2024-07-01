@@ -2,7 +2,8 @@ package kr.hiplay.idverify_web.app.bridge
 
 import io.github.cdimascio.dotenv.dotenv
 import jakarta.servlet.http.HttpServletRequest
-import kr.hiplay.idverify_web.utils.DecodeUnicodeUtil
+import jakarta.servlet.http.HttpServletResponse
+import kr.hiplay.idverify_web.common.utils.DecodeUnicodeUtil
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -17,14 +18,14 @@ import org.springframework.web.servlet.LocaleResolver
 
 @Controller
 @RequestMapping("/bridge")
-class BridgeController {
+class BridgeController(var bridgeService: BridgeService) {
     private val dotenv = dotenv()
 
     @Autowired
-    private lateinit var bridgeService: BridgeService
+    private lateinit var request: HttpServletRequest
 
     @Autowired
-    private lateinit var request: HttpServletRequest
+    private lateinit var response: HttpServletResponse
 
     @Autowired
     @Qualifier("localeResolver")
@@ -35,13 +36,14 @@ class BridgeController {
     @GetMapping("/start.html")
     fun start(
         model: Model,
-        @RequestParam("clientId", required = false) clientId: String?
+        @RequestParam("client_id", required = false) clientId: String?
     ): String {
         model["serviceName"] = DecodeUnicodeUtil().convert(dotenv["SERVICE_NAME"])
         model["lang"] = localeResolver.resolveLocale(request)
 
         if (clientId.isNullOrEmpty() || clientId.isBlank()) {
-            model["error"] = "[CEX-0001] \"clientId\" 값은 필수입니다."
+            response.status = HttpServletResponse.SC_BAD_REQUEST
+            model["error"] = "[CEX-0001] \"client_id\" 값은 필수입니다."
             return "identify/error"
         }
 
@@ -57,6 +59,7 @@ class BridgeController {
             model["providersList"] = clientInfo.getList("providers", Document::class.java)
                 .map { it.getString("id") }
         } catch (e: ClientInfoException) {
+            response.status = HttpServletResponse.SC_BAD_REQUEST
             model["error"] = e.message
             return "identify/error"
         }
@@ -67,18 +70,20 @@ class BridgeController {
     @GetMapping("/request.html")
     fun request(
         model: Model,
-        @RequestParam("clientId", required = false) clientId: String?,
+        @RequestParam("client_id", required = false) clientId: String?,
         @RequestParam("provider", required = false) provider: String?
     ): String {
         model["serviceName"] = DecodeUnicodeUtil().convert(dotenv["SERVICE_NAME"])
         model["lang"] = localeResolver.resolveLocale(request)
 
         if (clientId.isNullOrEmpty() || clientId.isBlank()) {
-            model["error"] = "[CEX-0001] \"clientId\" 값은 필수입니다."
+            response.status = HttpServletResponse.SC_BAD_REQUEST
+            model["error"] = "[CEX-0001] \"client_id\" 값은 필수입니다."
             return "identify/error"
         }
 
         if (provider.isNullOrEmpty() || provider.isBlank()) {
+            response.status = HttpServletResponse.SC_BAD_REQUEST
             model["error"] = "[CEX-0001] \"provider\" 값은 필수입니다."
             return "identify/error"
         }
@@ -100,10 +105,12 @@ class BridgeController {
                         .getString("id")
                 }.contains(provider)
             ) {
+                response.status = HttpServletResponse.SC_BAD_REQUEST
                 model["error"] = "[CEX-0003] 지원하지 않는 인증수단입니다."
                 return "identify/error"
             }
         } catch (e: ClientInfoException) {
+            response.status = HttpServletResponse.SC_BAD_REQUEST
             model["error"] = e.message
             return "identify/error"
         }

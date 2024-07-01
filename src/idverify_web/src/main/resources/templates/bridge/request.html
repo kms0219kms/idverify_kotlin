@@ -54,7 +54,8 @@
       class="auth-info"
       th:action="${provider == 'PASS' || provider == 'SIGNGATE_TOSS' ? '/identify/'+provider.toLowerCase()+'/start.html' : ''}"
   >
-    <input name="clientId" th:value="${clientId}" type="hidden"/>
+    <input name="lang" th:value="${lang}" type="hidden"/>
+    <input name="client_id" th:value="${clientId}" type="hidden"/>
     <input name="provider"
            th:disabled="${provider == 'PASS' || provider == 'SIGNGATE_TOSS'}"
            th:value="${provider}"

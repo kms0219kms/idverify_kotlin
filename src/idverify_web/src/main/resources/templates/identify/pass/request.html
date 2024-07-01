@@ -13,7 +13,7 @@
   <input name="ordr_idxx" type="hidden" value=""/>
   <input name="up_hash" type="hidden" value=""/>
 
-  <input name="kcp_merchant_time" type="hidden" value=""/>
+  <input name="kcp_merchant_time" th:if="${pass_kcpCertLibName == 'KCP_SPL_API'}" type="hidden" value=""/>
   <input name="kcp_cert_lib_ver" type="hidden" value=""/>
 
   <!-- 요청구분 -->
@@ -37,21 +37,25 @@
   <input name="res_msg" type="hidden" value=""/>
 
   <!-- web_siteid 검증 을 위한 필드 -->
-  <input name="web_siteid_hashYN" th:value="${pass_webSiteidHashYN}" type="hidden"/>
+  <input name="web_siteid_hashYN" th:attr="value=${!pass_webSiteId.isBlank() && !pass_webSiteId.isEmpty() && pass_webSiteId != null} ? 'Y': 'N'"
+         type="hidden"/>
 
   <!-- up_hash 검증 을 위한 필드 -->
   <input name="veri_up_hash" type="hidden" value=""/>
 
   <!-- 가맹점 사용 필드 (인증완료시 리턴)-->
-  <input name="param_opt_1" type="hidden" value="opt1"/>
-  <input name="param_opt_2" type="hidden" value="opt2"/>
-  <input name="param_opt_3" type="hidden" value="opt3"/>
+  <input name="param_opt_1" th:value="${'client_id=' + clientId}" type="hidden"/>
+  <input name="param_opt_2" th:value="${'kcp_cert_lib_name=' + pass_kcpCertLibName}" type="hidden"/>
+  <input name="param_opt_3" type="hidden" value=""/>
 </form>
 
 <script th:inline="javascript">
   async function initVerify() {
     try {
-      const {data: hashData} = await axios.get("/api/pass/getHashData.do")
+      const {data: hashData} = await axios.post("/api/pass/getHashData.do", {
+        "client_id": [[${clientId}]],
+        "kcp_cert_lib_name": [[${pass_kcpCertLibName}]]
+      })
 
       // 해시 데이터 입력
       document.querySelector(
@@ -59,9 +63,12 @@
       document.querySelector(
           'form[name="form_auth"] input[name="up_hash"]').value = hashData.upHash
       document.querySelector(
-          'form[name="form_auth"] input[name="kcp_merchant_time"]').value = hashData.kcpMerchantTime
+              'form[name="form_auth"] input[name="kcp_cert_lib_ver"]').value = hashData.kcpCertLibVer
+
+      /*[# th:if="${pass_kcpCertLibName == 'KCP_SPL_API'}"]*/
       document.querySelector(
-          'form[name="form_auth"] input[name="kcp_cert_lib_ver"]').value = hashData.kcpCertLibVer
+          'form[name="form_auth"] input[name="kcp_merchant_time"]').value = hashData.kcpMerchantTime
+      /*[/]*/
 
       // 본인인증 요청
       self.name = "auth_popup";

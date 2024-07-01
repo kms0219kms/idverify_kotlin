@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.utils
+package kr.hiplay.idverify_web.common.utils
 
 class DecodeUnicodeUtil {
     /**

@@ -1,4 +1,4 @@
-package kr.hiplay.idverify_web.utils
+package kr.hiplay.idverify_web.common.utils
 
 /**
  * @file KISA_SEED_CBC.kt

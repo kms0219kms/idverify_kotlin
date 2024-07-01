@@ -20,14 +20,30 @@ class BridgeService {
 
     @Transactional
     fun fetchClientInfo(clientId: String): Document {
-        // TODO: DB에서 client값 가져와서 반환하기
-
         val collection: MongoCollection<Document> = database.getCollection("clients")
         val filter: Bson = Filters.eq("id", clientId)
         val clientInfo: Document = collection.find(filter).first()
             ?: throw ClientInfoException("[CEX-0002] 존재하지 않는 사이트 정보입니다.")
 
         return clientInfo
+    }
+
+    @Transactional
+    fun fetchPassInfo(clientId: String): Document {
+        return fetchPassInfoFromDocument(clientId, fetchClientInfo(clientId))
+    }
+
+    @Transactional
+    fun fetchPassInfoFromDocument(clientId: String, document: Document): Document {
+        println(document.getList("providers", Document::class.java).find {
+            it.getString("id") == "PASS"
+        })
+        val providerInfo = document.getList("providers", Document::class.java).find {
+            it.getString("id") == "PASS"
+        }
+            ?: throw ClientInfoException("[CEX-0003] 지원하지 않는 인증수단입니다.")
+
+        return providerInfo.get("configs", Document::class.java)
     }
 
 }

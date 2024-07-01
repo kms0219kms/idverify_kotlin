@@ -4,8 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.viascom.nanoid.NanoId
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import kr.hiplay.idverify_web.utils.CryptoUtil
-import kr.hiplay.idverify_web.utils.KISA_SEED_CBC
+import kr.hiplay.idverify_web.common.utils.CryptoUtil
+import kr.hiplay.idverify_web.common.utils.KISA_SEED_CBC
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

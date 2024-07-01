@@ -10,4 +10,8 @@ class PassCallbackDto {
 
     lateinit var up_hash: String
     lateinit var dn_hash: String
+
+    lateinit var param_opt_1: String
+    lateinit var param_opt_2: String
+    lateinit var param_opt_3: String
 }
