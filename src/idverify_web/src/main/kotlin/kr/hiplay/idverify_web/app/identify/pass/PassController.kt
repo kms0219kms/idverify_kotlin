@@ -107,7 +107,6 @@ class PassController(var passService: PassService) {
         }
 
         if (body.res_cd != "0000") {
-            println("ERROR on form... [KCP-${body.res_cd}] ${body.res_msg}")
             model["error"] = "[KCP-${body.res_cd}] ${body.res_msg}"
             return "identify/error"
         }
@@ -136,7 +135,6 @@ class PassController(var passService: PassService) {
         )
 
         if (!validationResult.resCd.equals("0000")) {
-            println("ERROR on Validation... ${kcpCertLibName} [KCP-${validationResult.resCd}] ${validationResult.resMsg}")
             model["error"] = "[KCP-${validationResult.resCd}] ${validationResult.resMsg}"
             return "identify/error"
         }
@@ -150,7 +148,6 @@ class PassController(var passService: PassService) {
         )
 
         if (!decryptedData.resCd.equals("0000")) {
-            println("ERROR on Decrypt... ${kcpCertLibName} [KCP-${decryptedData.resCd}] ${decryptedData.resMsg}")
             model["error"] = "[KCP-${decryptedData.resCd}] ${decryptedData.resMsg}"
             return "identify/error"
         }

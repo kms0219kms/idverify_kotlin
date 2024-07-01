@@ -1,12 +1,12 @@
 package kr.hiplay.idverify_web.app.identify.pass
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.github.cdimascio.dotenv.dotenv
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kr.co.kcp.CT_CLI
 import kr.hiplay.idverify_web.app.bridge.BridgeService
 import kr.hiplay.idverify_web.common.utils.CryptoUtil
-import kr.hiplay.idverify_web.common.utils.EncodingUtil
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
@@ -61,14 +61,17 @@ interface IDecryptData : IResponseBase {
 
 @Service
 class PassService {
+    private val dotenv = dotenv()
     private var bridgeService = BridgeService()
 
     private val cc = CT_CLI()
-    private val encodingUtil = EncodingUtil()
     private val httpClient = HttpClient.newBuilder().build()
 
-    private val _kcpApiBaseUrl = "https://stg-spl.kcp.co.kr" // KCP 테스트 서버
-//    private val _kcpApiBaseUrl = "https://spl.kcp.co.kr"; // KCP 운영 서버
+    // https://stg-spl.kcp.co.kr - KCP 테스트 서버
+    // https://spl.kcp.co.kr - KCP 운영 서버
+
+    private val _kcpApiBaseUrl = if (dotenv["ENVIRONMENT"] == "production") "https://spl.kcp.co.kr"
+    else "https://stg-spl.kcp.co.kr"
 
     private val _kcpApiReqUrl = URL("$_kcpApiBaseUrl/std/certpass") // KCP API 요청 URL
 
@@ -127,13 +130,15 @@ class PassService {
         }
 
         return object : IInitData {
-            override val siteCd = if (method === EConnectionMethod.API_SPL) passInfo.getString("api_site_cd")
+            override val siteCd = if (method == EConnectionMethod.API_SPL) passInfo.getString("api_site_cd")
             else passInfo.getString("site_cd")
             override val webSiteId = passInfo.getString("web_siteid")
             override val callbackUrl = "http://localhost:8080/identify/pass/callback.html"
-            override val kcpBaseUrl = "https://testcert.kcp.co.kr" // KCP 테스트 서버
 
-            //            override val kcpBaseUrl = "https://cert.kcp.co.kr" // KCP 운영 서버
+            // https://testcert.kcp.co.kr - KCP 테스트 서버
+            // https://cert.kcp.co.kr - KCP 운영 서버
+            override val kcpBaseUrl = if (dotenv["ENVIRONMENT"] == "production") "https://cert.kcp.co.kr"
+            else "https://testcert.kcp.co.kr"
             override val kcpCertLibName = method.libName
         }
     }
@@ -215,7 +220,7 @@ class PassService {
     ): IResponseBase {
         val passInfo = bridgeService.fetchPassInfo(clientId)
 
-        if (kcpCertLibName === EConnectionMethod.API_SPL.libName) {
+        if (kcpCertLibName == EConnectionMethod.API_SPL.libName) {
             val _siteCd = passInfo.getString("api_site_cd")
             val ctType = "CHK"
 
@@ -271,7 +276,7 @@ class PassService {
         val certKey = clientInfo.getString("certKey")
         val certIv = clientInfo.getString("certIv")
 
-        if (kcpCertLibName === EConnectionMethod.API_SPL.libName) {
+        if (kcpCertLibName == EConnectionMethod.API_SPL.libName) {
             val _siteCd = passInfo.getString("api_site_cd")
             val ctType = "DEC"
 
@@ -310,14 +315,14 @@ class PassService {
                             put("userBirth", responseBody.get("birth_day").asText())
                             put(
                                 "userGender", when {
-                                    responseBody.get("sex_code").asText() === "01" -> "M"
-                                    responseBody.get("sex_code").asText() === "02" -> "F"
+                                    responseBody.get("sex_code").asText() == "01" -> "M"
+                                    responseBody.get("sex_code").asText() == "02" -> "F"
                                     else -> "E"
                                 }
                             )
                             put(
                                 "userNationality", when {
-                                    responseBody.get("local_code").asText() === "01" -> "KR"
+                                    responseBody.get("local_code").asText() == "01" -> "KR"
                                     else -> "ETC"
                                 }
                             )
@@ -361,14 +366,14 @@ class PassService {
                             put("userBirth", cc.getKeyValue("birth_day"))
                             put(
                                 "userGender", when {
-                                    cc.getKeyValue("sex_code") === "01" -> "M"
-                                    cc.getKeyValue("sex_code") === "02" -> "F"
+                                    cc.getKeyValue("sex_code") == "01" -> "M"
+                                    cc.getKeyValue("sex_code") == "02" -> "F"
                                     else -> "E"
                                 }
                             )
                             put(
                                 "userNationality", when {
-                                    cc.getKeyValue("local_code") === "01" -> "KR"
+                                    cc.getKeyValue("local_code") == "01" -> "KR"
                                     else -> "ETC"
                                 }
                             )
