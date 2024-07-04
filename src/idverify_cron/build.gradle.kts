@@ -10,7 +10,7 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
 
     implementation("org.mongodb:mongodb-driver-sync:5.1.1")
-    implementation("redis.clients:jedis:5.1.2")
+    implementation("redis.clients:jedis:5.1.3")
 
     implementation("org.slf4j:slf4j-api:2.0.12")
     implementation("ch.qos.logback:logback-classic:1.5.4")
