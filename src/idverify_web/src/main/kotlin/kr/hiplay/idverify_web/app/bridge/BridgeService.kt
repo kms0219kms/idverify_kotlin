@@ -35,9 +35,6 @@ class BridgeService {
 
     @Transactional
     fun fetchPassInfoFromDocument(clientId: String, document: Document): Document {
-        println(document.getList("providers", Document::class.java).find {
-            it.getString("id") == "PASS"
-        })
         val providerInfo = document.getList("providers", Document::class.java).find {
             it.getString("id") == "PASS"
         }
