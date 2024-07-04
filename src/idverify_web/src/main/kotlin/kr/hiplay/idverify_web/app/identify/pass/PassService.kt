@@ -8,12 +8,12 @@ import kr.co.kcp.CT_CLI
 import kr.hiplay.idverify_web.app.bridge.BridgeService
 import kr.hiplay.idverify_web.common.utils.CryptoUtil
 import org.bouncycastle.asn1.ASN1Sequence
+import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo
 import org.bson.Document
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -62,7 +62,7 @@ interface IDecryptData : IResponseBase {
 @Service
 class PassService {
     private val dotenv = dotenv()
-    private var bridgeService = BridgeService()
+    private val bridgeService = BridgeService()
 
     private val cc = CT_CLI()
     private val httpClient = HttpClient.newBuilder().build()
@@ -89,7 +89,7 @@ class PassService {
 
         val encPkcs8PriKeyInfo =
             PKCS8EncryptedPrivateKeyInfo(
-                org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(
+                EncryptedPrivateKeyInfo.getInstance(
                     ASN1Sequence.getInstance(
                         Base64.getDecoder().decode(
                             passInfo.getString("api_privatekey")
@@ -119,9 +119,8 @@ class PassService {
         return Base64.getEncoder().encodeToString(btArrSignData)
     }
 
-    @Transactional
     fun getInitialData(clientId: String): IInitData {
-        val passInfo = bridgeService.fetchPassInfo(clientId)
+        val passInfo = bridgeService.fetchConfigs(clientId, "PASS")
 
         val method: EConnectionMethod = if ((1..2).random() == 2) {
             EConnectionMethod.API_SPL
@@ -143,9 +142,8 @@ class PassService {
         }
     }
 
-    @Transactional
     fun getHash(clientId: String, orderId: String, kcpCertLibName: String): IHashData {
-        val passInfo = bridgeService.fetchPassInfo(clientId)
+        val passInfo = bridgeService.fetchConfigs(clientId, "PASS")
 
         val _webSiteId = passInfo.getString("web_siteid")
 
@@ -210,7 +208,6 @@ class PassService {
         }
     }
 
-    @Transactional
     fun validateHash(
         clientId: String,
         orderId: String,
@@ -218,7 +215,7 @@ class PassService {
         dnHash: String,
         kcpCertLibName: String
     ): IResponseBase {
-        val passInfo = bridgeService.fetchPassInfo(clientId)
+        val passInfo = bridgeService.fetchConfigs(clientId, "PASS")
 
         if (kcpCertLibName == EConnectionMethod.API_SPL.libName) {
             val _siteCd = passInfo.getString("api_site_cd")
@@ -261,7 +258,6 @@ class PassService {
         }
     }
 
-    @Transactional
     fun decryptUserData(
         clientId: String,
         orderId: String,
@@ -270,7 +266,7 @@ class PassService {
         kcpCertLibName: String
     ): IDecryptData {
         val clientInfo = bridgeService.fetchClientInfo(clientId)
-        val passInfo = bridgeService.fetchPassInfoFromDocument(clientId, clientInfo)
+        val passInfo = bridgeService.fetchConfigsFromDocument(clientId, clientInfo, "PASS")
 
         val specName = "AES/CBC/PKCS5Padding"
         val certKey = clientInfo.getString("certKey")

@@ -8,7 +8,6 @@ import kr.hiplay.idverify_web.common.utils.CryptoUtil
 import kr.hiplay.idverify_web.common.utils.KISA_SEED_CBC
 
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.net.URL
 import java.net.URLDecoder
 
@@ -48,7 +47,6 @@ class UnifiedService {
 
     private val httpClient = HttpClient.newBuilder().build()
 
-    @Transactional
     fun createOrder(): String {
         val orderId = NanoId.generate()
 
@@ -57,7 +55,6 @@ class UnifiedService {
         return orderId
     }
 
-    @Transactional
     fun getInitialData(): IInitData {
         return object : IInitData {
             override val mid = _mid
@@ -66,7 +63,6 @@ class UnifiedService {
         }
     }
 
-    @Transactional
     fun getHash(orderId: String): IHashData {
         return object : IHashData {
             override val orderId = orderId
@@ -74,7 +70,6 @@ class UnifiedService {
         }
     }
 
-    @Transactional
     fun decryptUserData(
         txId: String,
         inicisSeedKeyRaw: String,

@@ -7,7 +7,9 @@
 
     async function initVerify() {
       try {
-        const {data: txData} = await axios.get("/api/toss/getTxId.do")
+        const {data: txData} = await axios.post("/api/toss/getTxId.do", {
+          "client_id": [[${clientId}]]
+        })
 
         tossCert.start({
           type: 'redirect',

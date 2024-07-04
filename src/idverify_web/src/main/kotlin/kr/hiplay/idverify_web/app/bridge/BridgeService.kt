@@ -9,7 +9,6 @@ import io.github.cdimascio.dotenv.dotenv
 import org.bson.Document
 import org.bson.conversions.Bson
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BridgeService {
@@ -18,7 +17,6 @@ class BridgeService {
     private val databaseClient: MongoClient = MongoClients.create(dotenv["MONGODB_URL"])
     private val database: MongoDatabase = databaseClient.getDatabase("cert")
 
-    @Transactional
     fun fetchClientInfo(clientId: String): Document {
         val collection: MongoCollection<Document> = database.getCollection("clients")
         val filter: Bson = Filters.eq("id", clientId)
@@ -28,15 +26,13 @@ class BridgeService {
         return clientInfo
     }
 
-    @Transactional
-    fun fetchPassInfo(clientId: String): Document {
-        return fetchPassInfoFromDocument(clientId, fetchClientInfo(clientId))
+    fun fetchConfigs(clientId: String, provider: String): Document {
+        return fetchConfigsFromDocument(clientId, fetchClientInfo(clientId), provider)
     }
 
-    @Transactional
-    fun fetchPassInfoFromDocument(clientId: String, document: Document): Document {
+    fun fetchConfigsFromDocument(clientId: String, document: Document, provider: String): Document {
         val providerInfo = document.getList("providers", Document::class.java).find {
-            it.getString("id") == "PASS"
+            it.getString("id") == provider
         }
             ?: throw ClientInfoException("[CEX-0003] 지원하지 않는 인증수단입니다.")
 

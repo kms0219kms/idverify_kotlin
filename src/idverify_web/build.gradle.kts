@@ -14,7 +14,6 @@ plugins {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
@@ -27,7 +26,9 @@ dependencies {
     implementation("org.bouncycastle:bcpkix-jdk18on:1.78.1")
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
+
     implementation("org.mongodb:mongodb-driver-sync:5.1.1")
+    implementation("redis.clients:jedis:5.1.2")
 
     implementation("com.github.toss:toss-cert-java-sdk:0.0.13")
     implementation(files("$projectDir/libs/CtCli-1.0.7.jar"))

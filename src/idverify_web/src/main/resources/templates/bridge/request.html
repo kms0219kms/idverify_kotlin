@@ -14,6 +14,7 @@
   <link href="/css/vendors/normalize.min.css" rel="stylesheet"/>
   <link href="/css/reset.css" rel="stylesheet"/>
 
+    <link href="/css/common.css" rel="stylesheet"/>
   <link href="/css/bridge.css" rel="stylesheet"/>
 </head>
 
@@ -168,7 +169,7 @@
 
 <script th:inline="javascript">
   $("#backBtn").click(function () {
-    location.href = "start.html?clientId=" + [[${clientId}]] + "&lang=" + [[${lang}]];
+      location.href = "start.html?client_id=" + [[${clientId}]] + "&lang=" + [[${lang}]];
   });
 </script>
 </body>

@@ -1,11 +1,10 @@
 package kr.hiplay.identify_cron.jobs
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
-
 import org.bson.Document
 import redis.clients.jedis.JedisPool
-
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -38,7 +37,7 @@ class TossAccessTokenJob {
 
     private fun getAccessToken(
         client: Document
-    ): HashMap<String, String> {
+    ): JsonNode? {
         val clientId = client.getString("client_id")
         val clientSecret = client.getString("client_secret")
 
@@ -62,23 +61,17 @@ class TossAccessTokenJob {
         this.logger.info { "$clientId : Token fetched" }
         this.logger.debug { "$clientId : $responseBody" }
 
-        val dataMap: HashMap<String, String> = HashMap()
-        dataMap["access_token"] = responseBody.get("access_token").asText()
-        dataMap["scope"] = responseBody.get("scope").asText()
-        dataMap["token_type"] = responseBody.get("token_type").asText()
-        dataMap["expires_in"] = responseBody.get("expires_in").asText()
-
         jedis.resource.use { jedis ->
             val key = "toss-token:$clientId"
             if (jedis.exists(key)) {
                 jedis.del(key)
             }
 
-            jedis.hset(key, dataMap)
+            jedis.set(key, responseBody.get("access_token").asText())
             jedis.expire(key, responseBody.get("expires_in").asLong())
             this.logger.info { "$key : Token saved" }
         }
 
-        return dataMap
+        return responseBody
     }
 }

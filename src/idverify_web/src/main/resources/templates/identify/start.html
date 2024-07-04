@@ -11,6 +11,10 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
 
+    <link href="/css/vendors/normalize.min.css" rel="stylesheet"/>
+    <link href="/css/reset.css" rel="stylesheet"/>
+
+    <link href="/css/common.css" rel="stylesheet"/>
   <link href="/css/style.css" rel="stylesheet"/>
 </head>
 
@@ -21,8 +25,15 @@
   </h3>
 
   <p class="description">
-    <img alt="Loading" class="loading" src="/images/loading_dark.png">
-    <span th:text="#{verify.loading}">
+      <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="/images/loading_dark.png">
+          <source media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
+                  srcset="/images/loading_light.png">
+
+          <img alt="Loading" class="loading" src="/images/loading_light.png">
+      </picture>
+
+      <span th:text="#{verify.loading}">
             인증 정보를 가져오는 중입니다...
       </span>
   </p>
