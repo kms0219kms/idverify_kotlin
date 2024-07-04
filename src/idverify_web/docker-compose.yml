@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  web:
+    image: ghcr.io/NGuard-Security/hiplay_idverify_web:latest
+    ports:
+      - "9808:8080"
+    env_file:
+      - .env
+    restart: always
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "9379:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+    labels:
+      - 'name=redis'
+      - 'mode=standalone'
+    restart: always

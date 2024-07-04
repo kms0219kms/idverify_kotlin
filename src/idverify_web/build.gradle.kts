@@ -33,3 +33,20 @@ dependencies {
     implementation("com.github.toss:toss-cert-java-sdk:0.0.13")
     implementation(files("$projectDir/libs/CtCli-1.0.7.jar"))
 }
+
+sourceSets {
+    main {
+        resources {
+            exclude("**/.env*")
+        }
+    }
+}
+
+tasks.bootJar {
+    exclude("**/.env*")
+    launchScript()
+}
+
+tasks.named<Jar>("jar") {
+    enabled = false
+}
