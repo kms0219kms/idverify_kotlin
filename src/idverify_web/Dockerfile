@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-alpine
+FROM openjdk:19-jdk-alpine
 LABEL org.opencontainers.image.source https://github.com/NGuard-Security/hiplay_idverify
 
 # Initial Setup
