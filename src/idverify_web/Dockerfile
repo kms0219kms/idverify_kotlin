@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine-jdk
+FROM amazoncorretto:22-alpine-jdk
 LABEL org.opencontainers.image.source https://github.com/NGuard-Security/hiplay_idverify
 
 # Initial Setup
