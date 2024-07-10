@@ -12,7 +12,10 @@ import org.bson.Document
 import redis.clients.jedis.JedisPool
 
 class HiplayIdverifyCronjob {
-    private val dotenv = dotenv()
+    private val dotenv = dotenv {
+        ignoreIfMissing = true
+        systemProperties = true
+    }
 
     private val dbClient: MongoClient = MongoClients.create(dotenv["MONGODB_URL"])
     private val collection: MongoCollection<Document> = dbClient.getDatabase("cert").getCollection("clients")

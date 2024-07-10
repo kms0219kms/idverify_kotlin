@@ -18,7 +18,11 @@ import org.springframework.web.servlet.LocaleResolver
 @Controller
 @RequestMapping("/identify/signgate_toss")
 class TossController(var tossService: TossService) {
-    private val dotenv = dotenv()
+    private val dotenv = dotenv {
+        ignoreIfMissing = true
+        systemProperties = true
+    }
+    
     private val encodingUtil = EncodingUtil()
 
     @Autowired

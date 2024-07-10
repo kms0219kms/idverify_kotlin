@@ -61,7 +61,11 @@ interface IDecryptData : IResponseBase {
 
 @Service
 class PassService {
-    private val dotenv = dotenv()
+    private val dotenv = dotenv {
+        ignoreIfMissing = true
+        systemProperties = true
+    }
+    
     private val bridgeService = BridgeService()
 
     private val cc = CT_CLI()

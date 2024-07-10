@@ -21,7 +21,11 @@ import java.net.URLDecoder
 @Controller
 @RequestMapping("/identify/pass")
 class PassController(var passService: PassService) {
-    private val dotenv = dotenv()
+    private val dotenv = dotenv {
+        ignoreIfMissing = true
+        systemProperties = true
+    }
+    
     private val encodingUtil = EncodingUtil()
 
     @Autowired

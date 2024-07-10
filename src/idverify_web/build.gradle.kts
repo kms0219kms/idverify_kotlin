@@ -34,11 +34,6 @@ dependencies {
     implementation(files("$projectDir/libs/CtCli-1.0.7.jar"))
 }
 
-dotenv {
-   ignoreIfMissing = true
-   systemProperties = true
-}
-
 sourceSets {
     main {
         resources {

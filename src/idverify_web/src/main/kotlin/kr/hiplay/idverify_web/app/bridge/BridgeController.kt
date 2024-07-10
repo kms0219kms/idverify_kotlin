@@ -19,7 +19,11 @@ import org.springframework.web.servlet.LocaleResolver
 @Controller
 @RequestMapping("/bridge")
 class BridgeController(var bridgeService: BridgeService) {
-    private val dotenv = dotenv()
+    private val dotenv = dotenv {
+        ignoreIfMissing = true
+        systemProperties = true
+    }
+    
     private val encodingUtil = EncodingUtil()
 
     @Autowired

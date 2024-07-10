@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class BridgeService {
-    private val dotenv = dotenv()
+    private val dotenv = dotenv {
+        ignoreIfMissing = true
+        systemProperties = true
+    }
 
     private val databaseClient: MongoClient = MongoClients.create(dotenv["MONGODB_URL"])
     private val database: MongoDatabase = databaseClient.getDatabase("cert")

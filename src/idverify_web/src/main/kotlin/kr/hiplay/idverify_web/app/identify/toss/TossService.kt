@@ -14,7 +14,11 @@ import java.net.http.HttpResponse
 
 @Service
 class TossService {
-    private val dotenv = dotenv()
+    private val dotenv = dotenv {
+        ignoreIfMissing = true
+        systemProperties = true
+    }
+    
     private val bridgeService = BridgeService()
 
     private val httpClient = HttpClient.newBuilder().build()
