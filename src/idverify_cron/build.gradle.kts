@@ -12,7 +12,7 @@ dependencies {
     implementation("org.mongodb:mongodb-driver-sync:5.1.1")
     implementation("redis.clients:jedis:5.1.2")
 
-    implementation("org.slf4j:slf4j-api:2.0.12")
+    implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 }
