@@ -25,7 +25,7 @@ dependencies {
 
     implementation("org.bouncycastle:bcpkix-jdk18on:1.78.1")
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
 
     implementation("org.mongodb:mongodb-driver-sync:5.1.1")
     implementation("redis.clients:jedis:5.1.3")
