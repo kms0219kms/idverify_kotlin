@@ -28,7 +28,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
 
     implementation("org.mongodb:mongodb-driver-sync:5.1.1")
-    implementation("redis.clients:jedis:5.1.2")
+    implementation("redis.clients:jedis:5.1.3")
 
     implementation("com.github.toss:toss-cert-java-sdk:0.0.14")
     implementation(files("$projectDir/libs/CtCli-1.0.7.jar"))
