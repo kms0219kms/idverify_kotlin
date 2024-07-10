@@ -49,6 +49,9 @@
   <input name="param_opt_3" type="hidden" value=""/>
 </form>
 
+<script src="/js/vendors/axios-1.7.2.min.js"></script>
+<script src="/js/vendors/jquery-4.0.0-beta.slim.min.js"></script>
+
 <script th:inline="javascript">
   async function initVerify() {
     try {
@@ -57,22 +60,20 @@
         "kcp_cert_lib_name": [[${pass_kcpCertLibName}]]
       })
 
+      $('form[name="form_auth"] input[name="Ret_URL"]').val(location.origin + $('form[name="form_auth"] input[name="Ret_URL"]').val())
+
       // 해시 데이터 입력
-      document.querySelector(
-          'form[name="form_auth"] input[name="ordr_idxx"]').value = hashData.orderId
-      document.querySelector(
-          'form[name="form_auth"] input[name="up_hash"]').value = hashData.upHash
-      document.querySelector(
-              'form[name="form_auth"] input[name="kcp_cert_lib_ver"]').value = hashData.kcpCertLibVer
+      $('form[name="form_auth"] input[name="ordr_idxx"]').val(hashData.orderId)
+      $('form[name="form_auth"] input[name="up_hash"]').val(hashData.upHash)
+      $('form[name="form_auth"] input[name="kcp_cert_lib_ver"]').val(hashData.kcpCertLibVer)
 
       /*[# th:if="${pass_kcpCertLibName == 'KCP_SPL_API'}"]*/
-      document.querySelector(
-          'form[name="form_auth"] input[name="kcp_merchant_time"]').value = hashData.kcpMerchantTime
+      $('form[name="form_auth"] input[name="kcp_merchant_time"]').val(hashData.kcpMerchantTime)
       /*[/]*/
 
       // 본인인증 요청
       self.name = "auth_popup";
-      document.querySelector('form[name="form_auth"]').submit()
+      $('form[name="form_auth"]').submit()
     } catch {
       alert([[#{common.errors.unexpected}]])
 
@@ -84,9 +85,8 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", initVerify)
+  $(document).ready(initVerify)
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"></script>
 </body>
 </html>

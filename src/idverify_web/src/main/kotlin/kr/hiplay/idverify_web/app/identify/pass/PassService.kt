@@ -98,6 +98,7 @@ class PassService {
                         Base64.getDecoder().decode(
                             passInfo.getString("api_privatekey")
                                 .replace("\r", "").replace("\n", "")
+                                .replace("-----BEGIN ENCRYPTED PRIVATE KEY-----", "").replace("-----END ENCRYPTED PRIVATE KEY-----", "")
                         )
                     )
                 )
@@ -136,7 +137,7 @@ class PassService {
             override val siteCd = if (method == EConnectionMethod.API_SPL) passInfo.getString("api_site_cd")
             else passInfo.getString("site_cd")
             override val webSiteId = passInfo.getString("web_siteid")
-            override val callbackUrl = "http://localhost:8080/identify/pass/callback.html"
+            override val callbackUrl = "/identify/pass/callback.html"
 
             // https://testcert.kcp.co.kr - KCP 테스트 서버
             // https://cert.kcp.co.kr - KCP 운영 서버
