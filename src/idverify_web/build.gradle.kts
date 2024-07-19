@@ -32,15 +32,16 @@ dependencies {
 
     implementation("com.github.toss:toss-cert-java-sdk:0.0.14")
     implementation(files("$projectDir/libs/CtCli-1.0.7.jar"))
+    implementation(files("$projectDir/libs/NiceID_v1.1.jar"))
 }
 
-sourceSets {
-    main {
-        resources {
-            exclude("**/.env*")
-        }
-    }
-}
+//sourceSets {
+//    main {
+//        resources {
+//            exclude("**/.env*")
+//        }
+//    }
+//}
 
 tasks.bootJar {
     exclude("**/.env*")

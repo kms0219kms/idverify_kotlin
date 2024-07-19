@@ -114,6 +114,27 @@ class BridgeController(var bridgeService: BridgeService) {
                 model["error"] = "[CEX-0003] 지원하지 않는 인증수단입니다."
                 return "identify/error"
             }
+
+            // 인증창으로 바로 Redirect 해야하는 일부 인증수단
+            if (arrayOf("PASS", "YESKEY", "NICE_PKI", "TOSS").contains(provider)) {
+                // 나이스평가정보 분기
+                if (provider == "YESKEY" || provider == "NICE_PKI") {
+                    val method: String =
+                        if (provider.contains("_")) provider.lowercase().split('_')[1] else provider.lowercase()
+                    return "redirect:/identify/nice/start.html?lang=${localeResolver.resolveLocale(request)}&client_id=$clientId&method=$method"
+                }
+
+                if (provider == "PASS") {
+                    if (bridgeService.fetchConfigs(clientId, "PASS").getString("provider") == "nice") {
+                        return "redirect:/identify/nice/start.html?lang=${localeResolver.resolveLocale(request)}&client_id=$clientId&method=pass"
+                    }
+                }
+
+                // 기타
+                return "redirect:/identify/${
+                    provider.lowercase().replace("_", "/")
+                }/start.html?lang=${localeResolver.resolveLocale(request)}&client_id=$clientId"
+            }
         } catch (e: ClientInfoException) {
             response.status = HttpServletResponse.SC_BAD_REQUEST
             model["error"] = e.message

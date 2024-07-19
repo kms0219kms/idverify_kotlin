@@ -4,17 +4,18 @@
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport">
 
-  <title>본인 인증 | 하이플레이</title>
+  <title th:text="${'본인 인증 | ' + serviceName}"></title>
 </head>
 <body>
 <form method="post" name="form_auth" target="auth_popup"
       th:action="${pass_kcpBaseUrl} + '/kcp_cert/cert_view.jsp'">
   <!-- 요청정보 -->
-  <input name="ordr_idxx" type="hidden" value=""/>
-  <input name="up_hash" type="hidden" value=""/>
+  <input name="ordr_idxx" th:value="${pass_orderId}" type="hidden"/>
+  <input name="up_hash" th:value="${pass_upHash}" type="hidden"/>
 
-  <input name="kcp_merchant_time" th:if="${pass_kcpCertLibName == 'KCP_SPL_API'}" type="hidden" value=""/>
-  <input name="kcp_cert_lib_ver" type="hidden" value=""/>
+  <input name="kcp_merchant_time" th:if="${pass_kcpCertLibName == 'KCP_SPL_API'}" th:value="${pass_kcpMerchantTime}"
+         type="hidden"/>
+  <input name="kcp_cert_lib_ver" th:value="${pass_kcpCertLibVer}" type="hidden"/>
 
   <!-- 요청구분 -->
   <input name="req_tx" type="hidden" value="cert"/>
@@ -23,7 +24,7 @@
   <!-- 가맹점 정보 -->
   <input name="web_siteid" th:value="${pass_webSiteId}" type="hidden"/>
   <input name="site_cd" th:value="${pass_siteCd}" type="hidden"/>
-  <input name="Ret_URL" th:value="${pass_callbackUrl}" type="hidden"/>
+  <input name="Ret_URL" type="hidden" value=""/>
 
   <!-- cert_otp_use 필수 (메뉴얼 참고)
   Y : 실명 확인 + OTP 점유 확인, N : 실명 확인 only -->
@@ -49,43 +50,16 @@
   <input name="param_opt_3" type="hidden" value=""/>
 </form>
 
-<script src="/js/vendors/axios-1.7.2.min.js"></script>
 <script src="/js/vendors/jquery-4.0.0-beta.slim.min.js"></script>
 
 <script th:inline="javascript">
-  async function initVerify() {
-    try {
-      const {data: hashData} = await axios.post("/api/pass/getHashData.do", {
-        "client_id": [[${clientId}]],
-        "kcp_cert_lib_name": [[${pass_kcpCertLibName}]]
-      })
+  $(document).ready(function () {
+    $('form[name="form_auth"] input[name="Ret_URL"]').val(location.origin + [[${pass_callbackUrl}]])
 
-      $('form[name="form_auth"] input[name="Ret_URL"]').val(location.origin + $('form[name="form_auth"] input[name="Ret_URL"]').val())
-
-      // 해시 데이터 입력
-      $('form[name="form_auth"] input[name="ordr_idxx"]').val(hashData.orderId)
-      $('form[name="form_auth"] input[name="up_hash"]').val(hashData.upHash)
-      $('form[name="form_auth"] input[name="kcp_cert_lib_ver"]').val(hashData.kcpCertLibVer)
-
-      /*[# th:if="${pass_kcpCertLibName == 'KCP_SPL_API'}"]*/
-      $('form[name="form_auth"] input[name="kcp_merchant_time"]').val(hashData.kcpMerchantTime)
-      /*[/]*/
-
-      // 본인인증 요청
-      self.name = "auth_popup";
-      $('form[name="form_auth"]').submit()
-    } catch {
-      alert([[#{common.errors.unexpected}]])
-
-      if (opener) {
-        window.close()
-      } else {
-        window.stop()
-      }
-    }
-  }
-
-  $(document).ready(initVerify)
+    // 본인인증 요청
+    self.name = "auth_popup";
+    $('form[name="form_auth"]').submit()
+  })
 </script>
 
 </body>

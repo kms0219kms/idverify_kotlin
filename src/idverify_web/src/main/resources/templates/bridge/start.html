@@ -14,8 +14,10 @@
   <link href="/css/vendors/normalize.min.css" rel="stylesheet"/>
   <link href="/css/reset.css" rel="stylesheet"/>
 
-    <link href="/css/common.css" rel="stylesheet"/>
+  <link href="/css/common.css" rel="stylesheet"/>
   <link href="/css/bridge.css" rel="stylesheet"/>
+
+  <link href="/css/vendors/jquery-confirm-3.3.5.min.css" rel="stylesheet"/>
 </head>
 
 <body>
@@ -41,15 +43,20 @@
       <span>휴대폰 인증</span>
     </div>
 
-    <div class="cert-provider-btn" th:if="${providersList.contains('INICIS_CARD')}">
-      <button aria-label="신용카드 인증" data-provider="INICIS_CARD"
+    <div class="cert-provider-btn" th:if="${providersList.contains('CARD')}">
+      <button aria-label="신용카드 인증" data-provider="CARD"
               type="button"></button>
       <span>신용카드 인증</span>
     </div>
 
-    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_YESKEY')}">
-      <button aria-label="금융인증서" data-provider="UNIFIED_YESKEY" type="button"></button>
+    <div class="cert-provider-btn" th:if="${providersList.contains('YESKEY')}">
+      <button aria-label="금융인증서" data-provider="YESKEY" type="button"></button>
       <span>금융인증서</span>
+    </div>
+
+    <div class="cert-provider-btn" th:if="${providersList.contains('NICE_PKI')}">
+      <button aria-label="공동인증서" data-provider="NICE_PKI" type="button"></button>
+      <span>공동인증서</span>
     </div>
 
     <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_KAKAO')}">
@@ -62,19 +69,9 @@
       <span>네이버</span>
     </div>
 
-    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_KOOKMIN')}">
-      <button aria-label="KB국민인증서" data-provider="UNIFIED_KOOKMIN" type="button"></button>
-      <span>KB국민인증서</span>
-    </div>
-
-    <div class="cert-provider-btn" th:if="${providersList.contains('SIGNGATE_TOSS')}">
-      <button aria-label="토스" data-provider="SIGNGATE_TOSS" type="button"></button>
-      <span>토스</span>
-    </div>
-
-    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_SHINHAN')}">
-      <button aria-label="신한인증서" data-provider="UNIFIED_SHINHAN" type="button"></button>
-      <span>신한인증서</span>
+    <div class="cert-provider-btn" th:if="${providersList.contains('PASS_CERT')}">
+      <button aria-label="PASS인증서" data-provider="PASS_CERT" type="button"></button>
+      <span>PASS인증서</span>
     </div>
 
     <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_PAYCO')}">
@@ -82,14 +79,24 @@
       <span>PAYCO</span>
     </div>
 
+    <div class="cert-provider-btn" th:if="${providersList.contains('TOSS')}">
+      <button aria-label="토스" data-provider="TOSS" type="button"></button>
+      <span>토스</span>
+    </div>
+
     <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_SPASS')}">
       <button aria-label="삼성패스" data-provider="UNIFIED_SPASS" type="button"></button>
       <span>삼성패스</span>
     </div>
 
-    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_BANKSALAD')}">
-      <button aria-label="뱅크샐러드" data-provider="UNIFIED_BANKSALAD" type="button"></button>
-      <span>뱅크샐러드</span>
+    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_KOOKMIN')}">
+      <button aria-label="KB국민인증서" data-provider="UNIFIED_KOOKMIN" type="button"></button>
+      <span>KB국민인증서</span>
+    </div>
+
+    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_SHINHAN')}">
+      <button aria-label="신한인증서" data-provider="UNIFIED_SHINHAN" type="button"></button>
+      <span>신한인증서</span>
     </div>
 
     <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_KEBHANA')}">
@@ -97,14 +104,29 @@
       <span>하나인증서</span>
     </div>
 
+    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_WOORI')}">
+      <button aria-label="우리인증서" data-provider="UNIFIED_WOORI" type="button"></button>
+      <span>우리인증서</span>
+    </div>
+
+    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_IBK')}">
+      <button aria-label="IBK인증서" data-provider="UNIFIED_IBK" type="button"></button>
+      <span>IBK인증서</span>
+    </div>
+
+    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_NONGHYUP')}">
+      <button aria-label="NH모바일인증서" data-provider="UNIFIED_NONGHYUP" type="button"></button>
+      <span>NH모바일인증서</span>
+    </div>
+
     <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_KAKAOBANK')}">
       <button aria-label="카카오뱅크" data-provider="UNIFIED_KAKAOBANK" type="button"></button>
       <span>카카오뱅크</span>
     </div>
 
-    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_WOORI')}">
-      <button aria-label="우리인증서" data-provider="UNIFIED_WOORI" type="button"></button>
-      <span>우리인증서</span>
+    <div class="cert-provider-btn" th:if="${providersList.contains('UNIFIED_BANKSALAD')}">
+      <button aria-label="뱅크샐러드" data-provider="UNIFIED_BANKSALAD" type="button"></button>
+      <span>뱅크샐러드</span>
     </div>
   </form>
 </main>

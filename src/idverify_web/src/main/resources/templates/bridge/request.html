@@ -29,19 +29,9 @@
       <div class="header-method-wrap">
         <div class="header-method-icon" th:data-provider="${provider}"></div>
 
-        <h2 th:if="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}">
+        <h2>
           <!--                        카카오톡을 선택하셨어요!<br />-->
           <span class="mobile-optional">가입하신 인증서 정보를 입력하여 인증을 진행해 주세요.</span>
-        </h2>
-
-        <h2 th:if="${provider == 'PASS'}">
-          휴대폰 인증을 선택하셨어요!<br/>
-          <span class="mobile-optional">인증 진행 버튼을 클릭하여 인증을 시작해 주세요.</span>
-        </h2>
-
-        <h2 th:if="${provider == 'SIGNGATE_TOSS'}">
-          토스를 선택하셨어요!<br/>
-          <span class="mobile-optional">인증 진행 버튼을 클릭하여 인증을 시작해 주세요.</span>
         </h2>
       </div>
     </section>
@@ -51,55 +41,33 @@
     </section>
   </header>
 
-  <form
-      class="auth-info"
-      th:action="${provider == 'PASS' || provider == 'SIGNGATE_TOSS' ? '/identify/'+provider.toLowerCase()+'/start.html' : ''}"
-  >
+  <form class="auth-info">
     <input name="lang" th:value="${lang}" type="hidden"/>
     <input name="client_id" th:value="${clientId}" type="hidden"/>
     <input name="provider"
-           th:disabled="${provider == 'PASS' || provider == 'SIGNGATE_TOSS'}"
            th:value="${provider}"
            type="hidden"/>
 
-    <div
-        class="auth_input"
-        th:if="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
-    >
+    <div class="auth_input">
       <input id="auth_name" name="username" required title="이름을 입력해주세요." type="text"/>
       <label for="auth_name">이름</label>
     </div>
 
-    <div
-        class="auth_input"
-        th:if="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
-    >
-      <input class="virtual-input" data-kioskboard-placement="bottom"
-             data-kioskboard-type="numpad" data-value=" "
-             id="auth_birth"
-             maxlength="8" name="birthday" readonly
-             required title="생년월일을 입력해주세요. (예. 20000116)"
-             type="number"/>
+    <div class="auth_input">
+      <input id="auth_birth"
+             maxlength="8" name="birthday" required
+             title="생년월일을 입력해주세요. (예. 20000116)" type="number"/>
       <label for="auth_birth">생년월일 (예. 19960309)</label>
     </div>
 
-    <div
-        class="auth_input"
-        th:if="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
-    >
-      <input class="virtual-input" data-kioskboard-placement="bottom"
-             data-kioskboard-type="numpad" data-value=" "
-             id="auth_phone"
-             maxlength="11" name="phone" readonly
-             required title="휴대전화번호를 입력해주세요. (- 제외)"
-             type="tel"/>
+    <div class="auth_input">
+      <input id="auth_phone"
+             maxlength="11" name="phone" required
+             title="휴대전화번호를 입력해주세요. (- 제외)" type="tel"/>
       <label for="auth_phone">휴대전화번호 (- 제외)</label>
     </div>
 
-    <div
-        class="agree_area"
-        th:if="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
-    >
+    <div class="agree_area">
       <div class="agree_all_check">
         <input id="chk_all" type="checkbox">
         <label for="chk_all">전체 동의</label>
@@ -136,24 +104,12 @@
       </ul>
     </div>
 
-    <div
-        class="agree_area"
-        th:if="${provider == 'PASS' || provider == 'SIGNGATE_TOSS'}"
-    >
-      <div class="agree_all_check" style="flex-direction: column; font-size: 16px;">
-        <label>인증 진행 버튼을 누르면 인증창으로 이동합니다.</label>
-        <label>인증창에서 인증서 정보를 입력하고 약관에 동의할 수 있습니다.</label>
-      </div>
-    </div>
-
     <div class="control_btns">
       <button id="backBtn" type="button">
         <span>이전</span>
       </button>
 
-      <button id="submit"
-              th:disabled="${provider != 'PASS' && provider != 'SIGNGATE_TOSS'}"
-              type="submit">
+      <button disabled id="submit" type="submit">
         <span>인증 진행</span>
       </button>
     </div>
@@ -161,10 +117,6 @@
 </main>
 
 <script src="/js/vendors/jquery-4.0.0-beta.slim.min.js"></script>
-<script src="/js/vendors/kioskboard-aio-2.3.0.min.js"></script>
-<script src="/js/vendors/rsa.min.js"></script>
-
-<script src="/js/events.js"></script>
 <script src="/js/request.js"></script>
 
 <script th:inline="javascript">

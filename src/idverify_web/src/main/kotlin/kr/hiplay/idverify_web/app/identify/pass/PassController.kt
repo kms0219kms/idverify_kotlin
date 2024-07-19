@@ -1,6 +1,7 @@
 package kr.hiplay.idverify_web.app.identify.pass
 
 import io.github.cdimascio.dotenv.dotenv
+import io.viascom.nanoid.NanoId
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import kr.hiplay.idverify_web.app.bridge.ClientInfoException
@@ -75,12 +76,21 @@ class PassController(var passService: PassService) {
 
             val initialData = passService.getInitialData(clientId)
 
+            val orderId = NanoId.generate()
+            val hashData = passService.getHash(clientId, orderId, initialData.kcpCertLibName)
+
             model["clientId"] = clientId
             model["pass_siteCd"] = initialData.siteCd
             model["pass_webSiteId"] = initialData.webSiteId
+
+            model["pass_orderId"] = orderId
+            model["pass_upHash"] = hashData.upHash
             model["pass_callbackUrl"] = initialData.callbackUrl
+
             model["pass_kcpBaseUrl"] = initialData.kcpBaseUrl
             model["pass_kcpCertLibName"] = initialData.kcpCertLibName
+            model["pass_kcpCertLibVer"] = hashData.kcpCertLibVer
+            model["pass_kcpMerchantTime"] = hashData.kcpMerchantTime
 
             return "identify/pass/request"
         } catch (e: ClientInfoException) {
@@ -150,11 +160,6 @@ class PassController(var passService: PassService) {
             encCertData = body.enc_cert_data2,
             kcpCertLibName = kcpCertLibName
         )
-
-        if (!decryptedData.resCd.equals("0000")) {
-            model["error"] = "[KCP-${decryptedData.resCd}] ${decryptedData.resMsg}"
-            return "identify/error"
-        }
 
         model["specName"] = decryptedData.specName
         model["authData"] = decryptedData.authData

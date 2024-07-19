@@ -1,0 +1,13 @@
+<section th:fragment="request">
+    <form action="https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb" id="form_chk" method="post"
+          name="form_chk">
+        <input name="m" type="hidden" value="checkplusService">                        <!-- 필수 데이타로, 누락하시면 안됩니다. -->
+        <input name="EncodeData" th:value="${nice_encData}" type="hidden">
+    </form>
+
+    <script src="/js/vendors/jquery-4.0.0-beta.slim.min.js"></script>
+
+    <script>
+        $("#form_chk").submit()
+    </script>
+</section>

@@ -264,16 +264,22 @@ header {
   background-size: cover;
 }
 
-.cert-provider button[data-provider="INICIS_CARD"],
-.header-method-icon[data-provider="INICIS_CARD"] {
+.cert-provider button[data-provider="CARD"],
+.header-method-icon[data-provider="CARD"] {
   background: white url("/images/bridge/app_CARD.png") no-repeat center;
   background-size: cover;
 }
 
-.cert-provider button[data-provider="UNIFIED_YESKEY"],
-.header-method-icon[data-provider="UNIFIED_YESKEY"] {
+.cert-provider button[data-provider="YESKEY"],
+.header-method-icon[data-provider="YESKEY"] {
   background: white url("/images/bridge/app_KFTC.svg") no-repeat center;
   background-size: 75%;
+}
+
+.cert-provider button[data-provider="NICE_PKI"],
+.header-method-icon[data-provider="NICE_PKI"] {
+  background: #eeeeee url("/images/bridge/app_PKI.png") no-repeat center;
+  background-size: 130%;
 }
 
 .cert-provider button[data-provider="UNIFIED_KAKAO"],
@@ -288,22 +294,10 @@ header {
   background-size: cover;
 }
 
-.cert-provider button[data-provider="UNIFIED_KOOKMIN"],
-.header-method-icon[data-provider="UNIFIED_KOOKMIN"] {
-  background: #ffae00 url("/images/bridge/app_KOOKMIN.png") no-repeat center;
-  background-size: 100%;
-}
-
-.cert-provider button[data-provider="SIGNGATE_TOSS"],
-.header-method-icon[data-provider="SIGNGATE_TOSS"] {
-  background: white url("/images/bridge/app_TOSS.png") no-repeat center;
-  background-size: 90%;
-}
-
-.cert-provider button[data-provider="UNIFIED_SHINHAN"],
-.header-method-icon[data-provider="UNIFIED_SHINHAN"] {
-  background: white url("/images/bridge/app_SHINHAN.png") no-repeat center;
-  background-size: 100%;
+.cert-provider button[data-provider="PASS_CERT"],
+.header-method-icon[data-provider="PASS_CERT"] {
+  background: #ff3a4a url("/images/bridge/app_PASS.png") no-repeat center;
+  background-size: cover;
 }
 
 .cert-provider button[data-provider="UNIFIED_PAYCO"],
@@ -312,16 +306,28 @@ header {
   background-size: cover;
 }
 
+.cert-provider button[data-provider="TOSS"],
+.header-method-icon[data-provider="TOSS"] {
+  background: white url("/images/bridge/app_TOSS.png") no-repeat center;
+  background-size: 90%;
+}
+
 .cert-provider button[data-provider="UNIFIED_SPASS"],
 .header-method-icon[data-provider="UNIFIED_SPASS"] {
   background: #1e4bc6 url("/images/bridge/app_SPASS.png") no-repeat center;
   background-size: 85%;
 }
 
-.cert-provider button[data-provider="UNIFIED_BANKSALAD"],
-.header-method-icon[data-provider="UNIFIED_BANKSALAD"] {
-  background: white url("/images/bridge/app_BANKSALAD.png") no-repeat center;
-  background-size: 85%;
+.cert-provider button[data-provider="UNIFIED_KOOKMIN"],
+.header-method-icon[data-provider="UNIFIED_KOOKMIN"] {
+  background: #ffae00 url("/images/bridge/app_KOOKMIN.png") no-repeat center;
+  background-size: 100%;
+}
+
+.cert-provider button[data-provider="UNIFIED_SHINHAN"],
+.header-method-icon[data-provider="UNIFIED_SHINHAN"] {
+  background: white url("/images/bridge/app_SHINHAN.png") no-repeat center;
+  background-size: 100%;
 }
 
 .cert-provider button[data-provider="UNIFIED_KEBHANA"],
@@ -330,16 +336,38 @@ header {
   background-size: 100%;
 }
 
+.cert-provider button[data-provider="UNIFIED_WOORI"],
+.header-method-icon[data-provider="UNIFIED_WOORI"] {
+  background: #0028a0 url("/images/bridge/app_WOORI.png") no-repeat center;
+  background-size: 90%;
+}
+
+.cert-provider button[data-provider="UNIFIED_IBK"],
+.header-method-icon[data-provider="UNIFIED_IBK"] {
+  background: white url("/images/bridge/app_IBK.png") no-repeat center;
+  background-size: contain;
+}
+
+.cert-provider button[data-provider="UNIFIED_NONGHYUP"],
+.header-method-icon[data-provider="UNIFIED_NONGHYUP"] {
+  background: #0042ff url("/images/bridge/app_NH.png") no-repeat center;
+  background-size: 130%;
+}
+
+.header-method-icon[data-provider="UNIFIED_NONGHYUP"] {
+  background-size: contain;
+}
+
 .cert-provider button[data-provider="UNIFIED_KAKAOBANK"],
 .header-method-icon[data-provider="UNIFIED_KAKAOBANK"] {
   background: #ffe300 url("/images/bridge/app_KAKAOBANK.png") no-repeat center;
   background-size: 100%;
 }
 
-.cert-provider button[data-provider="UNIFIED_WOORI"],
-.header-method-icon[data-provider="UNIFIED_WOORI"] {
-  background: #0028a0 url("/images/bridge/app_WOORI.png") no-repeat center;
-  background-size: 90%;
+.cert-provider button[data-provider="UNIFIED_BANKSALAD"],
+.header-method-icon[data-provider="UNIFIED_BANKSALAD"] {
+  background: white url("/images/bridge/app_BANKSALAD.png") no-repeat center;
+  background-size: 85%;
 }
 
 /** Media queries */

@@ -6,6 +6,8 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kr.co.kcp.CT_CLI
 import kr.hiplay.idverify_web.app.bridge.BridgeService
+import kr.hiplay.idverify_web.app.bridge.ClientInfoException
+import kr.hiplay.idverify_web.app.common.IDecryptData
 import kr.hiplay.idverify_web.common.utils.CryptoUtil
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo
@@ -49,14 +51,6 @@ interface IHashData : IResponseBase {
     val kcpCertLibVer: String
     val kcpCertLibName: String
     val kcpMerchantTime: String?
-}
-
-interface IDecryptData : IResponseBase {
-    val certKey: String
-    val certIv: String
-    val authData: String
-    val specName: String
-    val redirectUrl: String
 }
 
 @Service
@@ -302,9 +296,17 @@ class PassService {
             val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
             val responseBody = jacksonObjectMapper().readTree(response.body())
 
+            if (responseBody.get("res_cd").asText() != "0000") {
+                throw ClientInfoException(
+                    "[KCP-${responseBody.get("res_cd").asText()}] ${
+                        responseBody.get("res_msg").asText()
+                    }"
+                )
+            }
+
             return object : IDecryptData {
-                override val resCd = responseBody.get("res_cd").asText()
-                override val resMsg = responseBody.get("res_msg").asText()
+                val resCd = responseBody.get("res_cd").asText()
+                val resMsg = responseBody.get("res_msg").asText()
 
                 override val authData: String
                     get() {
@@ -353,9 +355,13 @@ class PassService {
 
             cc.decryptEncCert(_encKey, _siteCd, certNo, encCertData)
 
+            if (cc.getKeyValue("res_cd") != "0000") {
+                throw ClientInfoException("[KCP-${cc.getKeyValue("res_cd")}] ${cc.getKeyValue("res_msg")}")
+            }
+
             return object : IDecryptData {
-                override val resCd = cc.getKeyValue("res_cd")
-                override val resMsg = cc.getKeyValue("res_msg")
+                val resCd = cc.getKeyValue("res_cd")
+                val resMsg = cc.getKeyValue("res_msg")
 
                 override val authData: String
                     get() {
